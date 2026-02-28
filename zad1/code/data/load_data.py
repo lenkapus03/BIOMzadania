@@ -19,6 +19,7 @@ class ImageRecord:
     center_y_4: int
     polomer_4: int
 
+
 def load_random_records(csv_path, n=100):
     global RANDOM_RECORDS
 
@@ -33,3 +34,4 @@ def load_random_records(csv_path, n=100):
         records.append(ImageRecord(**row_dict))
 
     RANDOM_RECORDS = records
+    print(RANDOM_RECORDS)
