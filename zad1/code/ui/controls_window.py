@@ -5,7 +5,6 @@ from zad1.code.ui.ui_helpers import add_slider, add_checkbox, add_section_separa
 FIELD_SPACING = 4
 SECTION_SPACING = 8
 
-
 class ControlsWindow:
 
     def __init__(self, dispatcher, fonts, width, height):

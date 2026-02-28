@@ -4,6 +4,7 @@ def update_texture(state, image_data, width, height):
     if image_data is None:
         return None
 
+    # Create texture object internally
     with dpg.texture_registry():
         tex_id = dpg.add_dynamic_texture(width=width, height=height, default_value=image_data)
 

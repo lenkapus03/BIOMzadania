@@ -37,25 +37,40 @@ class ImageProcessor:
         return self.processed_image
 
     def get_scaled_texture(self):
+        # If there is no processed image, return None (nothing to display)
         if self.processed_image is None:
             return None
 
+        # Get height and width of the processed image
         img_h, img_w = self.processed_image.shape[:2]
+
+        # Create a blank canvas of the desired size, filled with white (255)
+        # Canvas shape: (canvas_height, canvas_width, 3) for RGB
         canvas = np.ones((self.canvas_height, self.canvas_width, 3), dtype=np.uint8) * 255
 
-        # center image
+        # Compute offsets to center the image on the canvas
         x_offset = (self.canvas_width - img_w) // 2
         y_offset = (self.canvas_height - img_h) // 2
-        img_x1 = max(0, -x_offset)
-        img_y1 = max(0, -y_offset)
-        canv_x1 = max(0, x_offset)
-        canv_y1 = max(0, y_offset)
+
+        # Calculate the start coordinates in the image and canvas for drawing
+        # Handles cases where the image is larger than the canvas (cropping)
+        img_x1 = max(0, -x_offset)  # start x in image
+        img_y1 = max(0, -y_offset)  # start y in image
+        canv_x1 = max(0, x_offset)  # start x in canvas
+        canv_y1 = max(0, y_offset)  # start y in canvas
+
+        # Determine how much width/height to draw (handles partial overlap)
         draw_w = min(img_w - img_x1, self.canvas_width - canv_x1)
         draw_h = min(img_h - img_y1, self.canvas_height - canv_y1)
 
+        # If there is a valid area to draw, copy the image onto the canvas
         if draw_w > 0 and draw_h > 0:
-            canvas[canv_y1:canv_y1+draw_h, canv_x1:canv_x1+draw_w] = \
-                self.processed_image[img_y1:img_y1+draw_h, img_x1:img_x1+draw_w]
+            canvas[canv_y1:canv_y1 + draw_h, canv_x1:canv_x1 + draw_w] = \
+                self.processed_image[img_y1:img_y1 + draw_h, img_x1:img_x1 + draw_w]
 
+        # Convert from BGR (OpenCV default) to RGBA (needed by DearPyGui)
         canvas = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGBA)
+
+        # Flatten the image to a 1D float array with values in range [0, 1]
+        # This is the format required by dpg.add_dynamic_texture
         return canvas.astype(np.float32).flatten() / 255.0

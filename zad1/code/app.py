@@ -71,7 +71,7 @@ class Application:
         if hasattr(self.state, "texture_id") and dpg.does_item_exist(self.state.texture_id):
             dpg.delete_item(self.state.texture_id)
 
-        # Add the new texture
+        # Add the new texture id into state
         self.state.texture_id = dpg.add_dynamic_texture(
             width=width,
             height=height,
