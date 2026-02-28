@@ -34,4 +34,3 @@ def load_random_records(csv_path, n=100):
         records.append(ImageRecord(**row_dict))
 
     RANDOM_RECORDS = records
-    print(RANDOM_RECORDS)
