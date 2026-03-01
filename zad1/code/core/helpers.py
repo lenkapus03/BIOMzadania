@@ -4,13 +4,13 @@ def update_texture(state, image_data, width, height):
     if image_data is None:
         return None
 
-    # Create texture object internally
+    # Delete previous texture if it exists
+    if getattr(state, 'texture_id', None) is not None and dpg.does_item_exist(state.texture_id):
+        dpg.delete_item(state.texture_id)
+
+    # Create new texture
     with dpg.texture_registry():
         tex_id = dpg.add_dynamic_texture(width=width, height=height, default_value=image_data)
-
-    # Delete previous texture if exists
-    if state.texture_id is not None and dpg.does_item_exist(state.texture_id):
-        dpg.delete_item(state.texture_id)
 
     state.texture_id = tex_id
 

@@ -3,10 +3,11 @@ import dearpygui.dearpygui as dpg
 
 from zad1.code.commands.clahe_command import CLAHECommand
 from zad1.code.commands.dispatcher import CommandDispatcher
-from zad1.code.commands.histogram_equalization import HistogramEqualizationCommand
+from zad1.code.commands.toggle_command import ToggleCommand
 from zad1.code.commands.update_canvas import UpdateCanvasCommand
 from zad1.code.core.image_manager import ImageManager
 from zad1.code.core.image_processor import ImageProcessor
+from zad1.code.core.renderer import Renderer
 from zad1.code.state.app_state import AppState
 from zad1.code.ui.controls_window import ControlsWindow
 from zad1.code.ui.image_window import ImageWindow
@@ -19,6 +20,7 @@ class Application:
         self.state = AppState()
         self.image_manager = ImageManager()
         self.processor = None
+        self.renderer = None
         self.dispatcher = CommandDispatcher()
 
         # Fonts
@@ -31,6 +33,7 @@ class Application:
         # Initialize app
         self._load_first_image()
         self._init_processor()
+        self._init_renderer()
         self._register_commands()
 
     # Initialization helpers
@@ -50,16 +53,21 @@ class Application:
             original_image=self.image_manager.original_image
         )
 
+    def _init_renderer(self):
+        self.renderer = Renderer(
+            processor=self.processor
+        )
+
     def _create_initial_texture(self):
         if self.processor is None or self.processor.processed_image is None:
             return
 
-        width = self.processor.canvas_width
-        height = self.processor.canvas_height
+        width = self.renderer.canvas_width
+        height = self.renderer.canvas_height
         if width == 0 or height == 0:
             return
 
-        canvas_data = self.processor.get_scaled_texture()
+        canvas_data = self.renderer.get_scaled_texture()
         if canvas_data is None:
             # fallback to blank RGBA
             canvas_data = [0.0] * (width * height * 4)
@@ -81,9 +89,10 @@ class Application:
         )
 
     def _register_commands(self):
-        self.dispatcher.register("update_canvas", UpdateCanvasCommand(self.processor, self.state))
-        self.dispatcher.register("toggle_histogram", HistogramEqualizationCommand(self.processor, self.state))
-        self.dispatcher.register("clahe", CLAHECommand(self.processor, self.state))
+        self.dispatcher.register("update_canvas", UpdateCanvasCommand(self.processor, self.renderer))
+        self.dispatcher.register("use_clahe", ToggleCommand(self.processor, self.renderer, "use_clahe"))
+        self.dispatcher.register("use_histogram_eq", ToggleCommand(self.processor, self.renderer, "use_histogram_eq"))
+        self.dispatcher.register("clahe", CLAHECommand(self.processor, self.renderer))
 
     # UI helpers
     def _setup_fonts(self):
