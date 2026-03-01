@@ -4,7 +4,7 @@ import dearpygui.dearpygui as dpg
 from zad1.code.commands.clahe_command import CLAHECommand
 from zad1.code.commands.dispatcher import CommandDispatcher
 from zad1.code.commands.toggle_command import ToggleCommand
-from zad1.code.commands.update_canvas import UpdateCanvasCommand
+from zad1.code.commands.update_canvas_command import UpdateCanvasCommand
 from zad1.code.core.image_manager import ImageManager
 from zad1.code.core.image_processor import ImageProcessor
 from zad1.code.core.renderer import Renderer
