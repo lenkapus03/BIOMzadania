@@ -11,16 +11,40 @@ class ImageProcessor:
         self.canvas_width = 320
         self.canvas_height = 280
 
-    def histogram_equalization(self, image, to_gray=True):
-        if to_gray:
-            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            equalized = cv2.equalizeHist(gray)
-            return cv2.cvtColor(equalized, cv2.COLOR_GRAY2BGR)
-        else:
-            # Equalize each channel separately (if needed)
-            channels = cv2.split(image)
-            eq_channels = [cv2.equalizeHist(ch) for ch in channels]
-            return cv2.merge(eq_channels)
+        self.use_clahe = False
+        self.clip_limit = 2
+        self.grid_size = 8
+
+    # Source: https://www.freedomvc.com/index.php/2021/09/11/color-image-histograms/
+    def histogram_equalization(self, image):
+        # Split into B, G, R channels
+        b, g, r = cv2.split(image)
+
+        # Equalize each channel separately
+        b_eq = cv2.equalizeHist(b)
+        g_eq = cv2.equalizeHist(g)
+        r_eq = cv2.equalizeHist(r)
+
+        # Merge equalized channels back into a single BGR image
+        equalized = cv2.merge((b_eq, g_eq, r_eq))
+        return equalized
+
+    # Source: https://medium.com/@lin.yong.hui.jason/histogram-equalization-for-color-images-using-opencv-655ae13b9dd0
+    def clahe(self, image):
+
+        # Create CLAHE object with given parameters
+        clahe = cv2.createCLAHE(
+            clipLimit=self.clip_limit,
+            tileGridSize=(self.grid_size, self.grid_size)
+        )
+
+        # Apply CLAHE to each channel separately
+        blue_clahe = clahe.apply(image[:, :, 0])
+        green_clahe = clahe.apply(image[:, :, 1])
+        red_clahe = clahe.apply(image[:, :, 2])
+
+        # Merge channels back into BGR image
+        return cv2.merge((blue_clahe, green_clahe, red_clahe))
 
     def apply(self):
         if self.original_image is None:
@@ -29,8 +53,10 @@ class ImageProcessor:
         img = self.original_image.copy()
 
         if self.use_histogram_eq:
-            img = self.histogram_equalization(img, to_gray=True)
+            img = self.histogram_equalization(img)
 
+        if self.use_clahe:
+            img = self.clahe(img)
         # ... other transformations go here
 
         self.processed_image = img

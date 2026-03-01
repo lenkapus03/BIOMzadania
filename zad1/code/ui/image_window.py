@@ -16,7 +16,6 @@ class ImageWindow:
         ):
             self._create_image_widget()
 
-    # Image logic
     def _create_image_widget(self):
         if self.state.texture_id is None:
             return
@@ -24,15 +23,4 @@ class ImageWindow:
         dpg.add_image(
             self.state.texture_id,
             tag="displayed_image_widget",
-        )
-
-    def update_texture(self, texture_id, width=None, height=None):
-        if not dpg.does_item_exist("displayed_image_widget"):
-            return
-
-        dpg.configure_item(
-            "displayed_image_widget",
-            texture_tag=texture_id,
-            width=width,
-            height=height,
         )

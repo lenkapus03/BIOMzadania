@@ -1,6 +1,7 @@
 import os
 import dearpygui.dearpygui as dpg
 
+from zad1.code.commands.clahe_command import CLAHECommand
 from zad1.code.commands.dispatcher import CommandDispatcher
 from zad1.code.commands.histogram_equalization import HistogramEqualizationCommand
 from zad1.code.commands.update_canvas import UpdateCanvasCommand
@@ -82,6 +83,7 @@ class Application:
     def _register_commands(self):
         self.dispatcher.register("update_canvas", UpdateCanvasCommand(self.processor, self.state))
         self.dispatcher.register("toggle_histogram", HistogramEqualizationCommand(self.processor, self.state))
+        self.dispatcher.register("clahe", CLAHECommand(self.processor, self.state))
 
     # UI helpers
     def _setup_fonts(self):

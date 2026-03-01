@@ -1,9 +1,6 @@
-# controls_window.py
 import dearpygui.dearpygui as dpg
 from zad1.code.ui.ui_helpers import add_slider, add_checkbox, add_section_separator
-
-FIELD_SPACING = 4
-SECTION_SPACING = 8
+from zad1.code.ui.ui_parameters import PARAMETER_CONFIG
 
 class ControlsWindow:
 
@@ -45,7 +42,7 @@ class ControlsWindow:
 
         labels = [
             ("Histogram equation", "toggle_histogram"),
-            ("CLAHE", "toggle_clahe"),
+            ("CLAHE", "clahe"),
             ("Gaussian blur", "toggle_blur"),
             ("Show canny edges", "toggle_canny"),
             ("Hough circles", "toggle_hough"),
@@ -85,7 +82,16 @@ class ControlsWindow:
             dpg.bind_item_font(title, self.large_font)
 
             for tag in tags:
-                self._add_slider(tag.replace("_", " ").title(), tag, "parameters_changed")
+                config = PARAMETER_CONFIG[tag]
+
+                self._add_slider(
+                    label=tag.replace("_", " ").title(),
+                    tag=tag,
+                    command_name=config["command"],
+                    default=config["default"],
+                    min_v=config["min"],
+                    max_v=config["max"],
+                )
 
             self._add_section_separator()
 
@@ -107,16 +113,16 @@ class ControlsWindow:
     # UI helper wrappers
     def _add_slider(self, label, tag, command_name=None, default=0, min_v=0, max_v=2000):
         add_slider(
-            label,
-            tag,
-            self.small_font,
+            label=label,
+            tag=tag,
+            small_font=self.small_font,
             callback=self._global_callback if command_name else None,
             default=default,
             min_v=min_v,
             max_v=max_v,
         )
+
         if command_name:
-            # attach user_data after creation
             dpg.set_item_user_data(tag, command_name)
 
     def _add_checkbox(self, label, command_name):

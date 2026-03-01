@@ -1,18 +1,24 @@
 import dearpygui.dearpygui as dpg
-
-FIELD_SPACING = 1
-SECTION_SPACING = 4
+from zad1.code.ui.ui_parameters import SECTION_SPACING, FIELD_SPACING
 
 def add_spacing(height): dpg.add_spacer(height=height)
 
-def add_slider(label, tag, small_font, callback, default=280, min_v=1, max_v=900):
-    slider = dpg.add_slider_int(
-        label=label, tag=tag, default_value=default,
-        min_value=min_v, max_value=max_v, callback=callback
+def add_slider(label, tag, small_font, callback=None, default=280, min_v=1, max_v=900):
+    is_float = any(isinstance(v, float) for v in (default, min_v, max_v))
+
+    slider_func = dpg.add_slider_float if is_float else dpg.add_slider_int
+
+    slider = slider_func(
+        label=label,
+        tag=tag,
+        default_value=default,
+        min_value=min_v,
+        max_value=max_v,
+        callback=callback,
     )
+
     dpg.bind_item_font(slider, small_font)
     add_spacing(FIELD_SPACING)
-
 
 def add_checkbox(label, tag, small_font):
     checkbox = dpg.add_checkbox(label=label, tag=tag)
