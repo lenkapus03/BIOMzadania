@@ -12,6 +12,10 @@ class ImageProcessor:
         self.clip_limit = 2
         self.grid_size = 8
 
+        self.use_blur = False
+        self.gauss_kernel = 5
+        self.gauss_sigma = 1.0
+
     # Source: https://www.freedomvc.com/index.php/2021/09/11/color-image-histograms/
     def histogram_equalization(self, image):
         b, g, r = cv2.split(image)
@@ -33,6 +37,10 @@ class ImageProcessor:
             clahe_obj.apply(image[:, :, 2])
         ])
 
+    # Source: https://docs.opencv.org/4.x/d4/d13/tutorial_py_filtering.html
+    def gaussian_blur(self, image):
+        return cv2.GaussianBlur(image, (self.gauss_kernel, self.gauss_kernel), self.gauss_sigma)
+
     def apply(self):
         if self.original_image is None:
             self.processed_image = None
@@ -43,6 +51,8 @@ class ImageProcessor:
             img = self.histogram_equalization(img)
         if self.use_clahe:
             img = self.clahe(img)
+        if self.use_blur:
+            img = self.gaussian_blur(img)
 
         self.processed_image = img
         return self.processed_image

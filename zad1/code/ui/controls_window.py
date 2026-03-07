@@ -77,7 +77,8 @@ class ControlsWindow:
                     command_name=cfg["command"],
                     default=cfg["default"],
                     min_v=cfg["min"],
-                    max_v=cfg["max"]
+                    max_v=cfg["max"],
+                    pre_callback = self._snap_odd if tag == "gauss_kernel" else None
                 )
 
             self._add_section_separator()
@@ -88,12 +89,18 @@ class ControlsWindow:
             dpg.add_button(label="Export settings", width=120, callback=self._global_callback, user_data="export_settings")
 
     # Helpers
-    def _add_slider(self, label, tag, command_name=None, default=0, min_v=0, max_v=2000):
+    def _add_slider(self, label, tag, command_name=None, default=0, min_v=0, max_v=2000, pre_callback=None):
+        def callback(sender, app_data, user_data):
+            if pre_callback:
+                pre_callback(sender, app_data, user_data)
+                app_data = dpg.get_value(sender)
+            self._global_callback(sender, app_data, user_data)
+
         add_slider(
             label=label,
             tag=tag,
             small_font=self.small_font,
-            callback=self._global_callback if command_name else None,
+            callback=callback if command_name else None,
             default=default,
             min_v=min_v,
             max_v=max_v
@@ -112,6 +119,10 @@ class ControlsWindow:
 
     def _add_section_separator(self):
         add_section_separator()
+
+    def _snap_odd(self, sender, app_data, user_data):
+        if app_data != 0 and app_data % 2 == 0:
+            dpg.set_value(sender, app_data + 1)
 
     def _global_callback(self, sender, app_data, user_data):
         command_name = dpg.get_item_user_data(sender)  # ← always the command name

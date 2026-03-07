@@ -16,17 +16,17 @@ PARAMETER_CONFIG = {
         "max": 32,
     },
 
-    # Gaussian (example defaults)
+    # Gaussian
     "gauss_kernel": {
-        "command": "toggle_blur",
+        "command": "gaussian_blur",
         "default": 5,
-        "min": 1,
+        "min": 0,
         "max": 31,
     },
     "gauss_sigma": {
-        "command": "toggle_blur",
+        "command": "gaussian_blur",
         "default": 1.0,
-        "min": 0.1,
+        "min": 0.0,
         "max": 10.0,
     },
 

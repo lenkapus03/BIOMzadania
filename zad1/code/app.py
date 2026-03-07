@@ -3,6 +3,7 @@ import dearpygui.dearpygui as dpg
 
 from zad1.code.commands.clahe_command import CLAHECommand
 from zad1.code.commands.dispatcher import CommandDispatcher
+from zad1.code.commands.gaussian_blur_command import GaussianBlurCommand
 from zad1.code.commands.toggle_command import ToggleCommand
 from zad1.code.commands.update_canvas_command import UpdateCanvasCommand
 from zad1.code.core.image_manager import ImageManager
@@ -93,6 +94,8 @@ class Application:
         self.dispatcher.register("use_clahe", ToggleCommand(self.processor, self.renderer, "use_clahe"))
         self.dispatcher.register("use_histogram_eq", ToggleCommand(self.processor, self.renderer, "use_histogram_eq"))
         self.dispatcher.register("clahe", CLAHECommand(self.processor, self.renderer))
+        self.dispatcher.register("use_blur", ToggleCommand(self.processor, self.renderer, "use_blur"))
+        self.dispatcher.register("gaussian_blur", GaussianBlurCommand(self.processor, self.renderer))
 
     # UI helpers
     def _setup_fonts(self):
