@@ -10,7 +10,10 @@ class ControlsWindow:
         self.height = height
 
     def build(self):
-        with dpg.window(label="Controls", width=self.width, height=self.height, pos=(0,0)):
+        with dpg.window(label="Controls", width=self.width, height=self.height, pos=(0, 0)):
+            self._build_circle_selector()
+            self._add_section_separator()
+
             self._build_view_section()
             self._add_section_separator()
 
@@ -21,6 +24,17 @@ class ControlsWindow:
             self._add_section_separator()
 
             self._build_bottom_buttons()
+
+    def _build_circle_selector(self):
+        title = dpg.add_text("Kružnica")
+        dpg.bind_item_font(title, self.large_font)
+        dpg.add_combo(
+            items=["iris", "pupil", "upper_lid", "lower_lid"],
+            default_value="iris",
+            tag="active_circle",
+            callback=lambda s, a, u: self.dispatcher.execute("select_circle", s, a, u),
+            width=-1
+        )
 
     # Sections
     def _build_view_section(self):
@@ -40,7 +54,8 @@ class ControlsWindow:
             "CLAHE": "use_clahe",
             "Gaussian blur": "use_blur",
             "Show canny edges": "use_canny",
-            "Hough circles": "show_hough"
+            "Hough circles": "show_hough",
+            "Show rejected circles": "show_rejected_circles",
         }
 
         with dpg.group(horizontal=True):
@@ -85,8 +100,15 @@ class ControlsWindow:
 
     def _build_bottom_buttons(self):
         with dpg.group(horizontal=True):
-            dpg.add_button(label="Reset defaults", width=120, callback=self._global_callback, user_data="reset_defaults")
-            dpg.add_button(label="Export settings", width=120, callback=self._global_callback, user_data="export_settings")
+            dpg.add_button(label="Reset defaults", width=120, callback=self._global_callback,
+                           user_data="reset_defaults")
+            dpg.add_button(label="Save settings", width=120, callback=self._global_callback,
+                           user_data="save_settings")
+        dpg.add_checkbox(
+            label="Preview original",
+            tag="preview_toggle",
+            callback=lambda s, a, u: self.dispatcher.execute("preview_original", s, a, u)
+        )
 
     # Helpers
     def _add_slider(self, label, tag, command_name=None, default=0, min_v=0, max_v=2000, pre_callback=None):

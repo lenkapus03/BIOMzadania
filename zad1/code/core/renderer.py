@@ -2,23 +2,18 @@ import cv2
 import numpy as np
 
 class Renderer:
-    def __init__(self, processor, canvas_width=320, canvas_height=280):
+    def __init__(self, processor, state=None, canvas_width=320, canvas_height=280):
         self.texture_id = None
         self.processor = processor
+        self.state = state
         self.canvas_width = canvas_width
         self.canvas_height = canvas_height
+        self.preview_original = False
 
-    def get_scaled_texture(self):
-        img = self.processor.processed_image
-        if img is None:
-            return None
-
+    def _build_canvas(self, img):
         img_h, img_w = img.shape[:2]
-
-        # Create blank canvas
         canvas = np.ones((self.canvas_height, self.canvas_width, 3), dtype=np.uint8) * 255
 
-        # Compute offsets for centering
         x_offset = (self.canvas_width - img_w) // 2
         y_offset = (self.canvas_height - img_h) // 2
 
@@ -32,13 +27,30 @@ class Renderer:
         if draw_w > 0 and draw_h > 0:
             canvas[canv_y1:canv_y1 + draw_h, canv_x1:canv_x1 + draw_w] = \
                 img[img_y1:img_y1 + draw_h, img_x1:img_x1 + draw_w]
+        return canvas
 
-        # Apply Hough on full canvas with padding
+    def get_scaled_texture(self):
+        if self.processor.processed_image is None:
+            return None
+
+        processed_canvas = self._build_canvas(self.processor.processed_image)
+
+        if self.processor.preview_original:
+            display_canvas = self._build_canvas(self.processor.original_image)
+        else:
+            display_canvas = processed_canvas
+
         if self.processor.show_hough:
-            canvas = self.processor.hough(canvas)
+            original_shape = self.processor.original_image.shape if self.processor.original_image is not None else None
+            display_canvas = self.processor.hough(
+                display_canvas,
+                self.state.active_circle,
+                original_shape,
+                show_rejected=self.processor.show_rejected_circles,
+                detect_on=processed_canvas
+            )
 
-        # Convert BGR → RGBA and flatten
-        canvas = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGBA)
+        canvas = cv2.cvtColor(display_canvas, cv2.COLOR_BGR2RGBA)
         return canvas.astype(np.float32).flatten() / 255.0
 
     def refresh_texture(self, apply_processor=True):

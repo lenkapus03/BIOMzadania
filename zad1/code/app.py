@@ -6,8 +6,12 @@ from zad1.code.commands.clahe_command import CLAHECommand
 from zad1.code.commands.dispatcher import CommandDispatcher
 from zad1.code.commands.gaussian_blur_command import GaussianBlurCommand
 from zad1.code.commands.hough_command import HoughCommand
+from zad1.code.commands.preview_command import PreviewOriginalCommand
+from zad1.code.commands.save_settings import SaveSettingsCommand
+from zad1.code.commands.select_circle_command import SelectCircleCommand
 from zad1.code.commands.toggle_command import ToggleCommand
 from zad1.code.commands.update_canvas_command import UpdateCanvasCommand
+from zad1.code.core.helpers import apply_params
 from zad1.code.core.image_manager import ImageManager
 from zad1.code.core.image_processor import ImageProcessor
 from zad1.code.core.renderer import Renderer
@@ -58,7 +62,8 @@ class Application:
 
     def _init_renderer(self):
         self.renderer = Renderer(
-            processor=self.processor
+            processor=self.processor,
+            state=self.state
         )
 
     def _create_initial_texture(self):
@@ -108,6 +113,11 @@ class Application:
         self.dispatcher.register("show_hough", ToggleCommand(self.processor, self.renderer, "show_hough"))
         self.dispatcher.register("hough", HoughCommand(self.processor, self.renderer))
 
+        self.dispatcher.register("select_circle", SelectCircleCommand(self.processor, self.renderer, self.state))
+        self.dispatcher.register("show_rejected_circles",ToggleCommand(self.processor, self.renderer, "show_rejected_circles"))
+        self.dispatcher.register("save_settings", SaveSettingsCommand(self.processor, self.renderer, self.state))
+        self.dispatcher.register("preview_original", ToggleCommand(self.processor, self.renderer, "preview_original"))
+
     # UI helpers
     def _setup_fonts(self):
         with dpg.font_registry():
@@ -136,11 +146,16 @@ class Application:
             pos_x=controls_width
         )
 
+    def _apply_initial_params(self):
+        saved = self.state.circle_params[self.state.active_circle]
+        apply_params(saved, self.processor, self.renderer)
+
     def _build_ui(self):
         self._setup_fonts()
         self._create_windows()
         self.controls_window.build()
         self.image_window.build()
+        self._apply_initial_params()
 
     # Run app
     def run(self):
@@ -152,6 +167,7 @@ class Application:
 
         self._create_initial_texture()
         self._build_ui()
+        self.renderer.refresh_texture(apply_processor=True)
 
         dpg.start_dearpygui()
         dpg.destroy_context()

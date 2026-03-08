@@ -1,0 +1,19 @@
+{
+  "clahe_clip": 1.0,
+  "clahe_tile": 8,
+  "gauss_kernel": 13,
+  "gauss_sigma": 5.085999965667725,
+  "threshold_1": 198,
+  "threshold_2": 500,
+  "hough_dp": 1.503999948501587,
+  "hough_mindist": 120,
+  "hough_param1": 120,
+  "hough_param2": 56,
+  "hough_minr": 17,
+  "hough_maxr": 61,
+  "use_histogram_eq": true,
+  "use_clahe": true,
+  "use_blur": true,
+  "use_canny": true,
+  "show_hough": true
+}

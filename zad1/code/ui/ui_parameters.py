@@ -1,3 +1,13 @@
+TOGGLE_TAGS = [
+    "use_histogram_eq",
+    "use_clahe",
+    "use_blur",
+    "use_canny",
+    "show_hough"
+]
+
+CANVAS_TAGS = ["canvas_width", "canvas_height"]
+
 FIELD_SPACING = 1
 SECTION_SPACING = 4
 
