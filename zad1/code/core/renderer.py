@@ -22,7 +22,6 @@ class Renderer:
         x_offset = (self.canvas_width - img_w) // 2
         y_offset = (self.canvas_height - img_h) // 2
 
-        # Determine drawing bounds (handle cropping if needed)
         img_x1 = max(0, -x_offset)
         img_y1 = max(0, -y_offset)
         canv_x1 = max(0, x_offset)
@@ -33,6 +32,10 @@ class Renderer:
         if draw_w > 0 and draw_h > 0:
             canvas[canv_y1:canv_y1 + draw_h, canv_x1:canv_x1 + draw_w] = \
                 img[img_y1:img_y1 + draw_h, img_x1:img_x1 + draw_w]
+
+        # Apply Hough on full canvas with padding
+        if self.processor.show_hough:
+            canvas = self.processor.hough(canvas)
 
         # Convert BGR → RGBA and flatten
         canvas = cv2.cvtColor(canvas, cv2.COLOR_BGR2RGBA)

@@ -46,37 +46,37 @@ PARAMETER_CONFIG = {
 
     # Hough
     "hough_dp": {
-        "command": "toggle_hough",
+        "command": "hough",
         "default": 1.2,
         "min": 1.0,
         "max": 3.0,
     },
     "hough_mindist": {
-        "command": "toggle_hough",
+        "command": "hough",
         "default": 50,
         "min": 1,
         "max": 500,
     },
     "hough_param1": {
-        "command": "toggle_hough",
+        "command": "hough",
         "default": 100,
         "min": 1,
         "max": 500,
     },
     "hough_param2": {
-        "command": "toggle_hough",
+        "command": "hough",
         "default": 30,
         "min": 1,
         "max": 200,
     },
     "hough_minr": {
-        "command": "toggle_hough",
+        "command": "hough",
         "default": 0,
         "min": 0,
         "max": 500,
     },
     "hough_maxr": {
-        "command": "toggle_hough",
+        "command": "hough",
         "default": 0,
         "min": 0,
         "max": 500,

@@ -5,6 +5,7 @@ from zad1.code.commands.canny_command import CannyCommand
 from zad1.code.commands.clahe_command import CLAHECommand
 from zad1.code.commands.dispatcher import CommandDispatcher
 from zad1.code.commands.gaussian_blur_command import GaussianBlurCommand
+from zad1.code.commands.hough_command import HoughCommand
 from zad1.code.commands.toggle_command import ToggleCommand
 from zad1.code.commands.update_canvas_command import UpdateCanvasCommand
 from zad1.code.core.image_manager import ImageManager
@@ -103,6 +104,9 @@ class Application:
 
         self.dispatcher.register("use_canny", ToggleCommand(self.processor, self.renderer, "use_canny"))
         self.dispatcher.register("canny", CannyCommand(self.processor, self.renderer))
+
+        self.dispatcher.register("show_hough", ToggleCommand(self.processor, self.renderer, "show_hough"))
+        self.dispatcher.register("hough", HoughCommand(self.processor, self.renderer))
 
     # UI helpers
     def _setup_fonts(self):

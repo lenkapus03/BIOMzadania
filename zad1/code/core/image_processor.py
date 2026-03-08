@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 class ImageProcessor:
     def __init__(self, original_image=None):
@@ -19,6 +20,14 @@ class ImageProcessor:
         self.use_canny = False
         self.canny_threshold_1 = 50
         self.canny_threshold_2 = 150
+
+        self.show_hough = False
+        self.hough_dp = 1.2
+        self.hough_mindist = 50
+        self.hough_param1 = 100  # higher canny threshold (internal)
+        self.hough_param2 = 30  # accumulator threshold
+        self.hough_minr = 0
+        self.hough_maxr = 0
 
     # Source: https://www.freedomvc.com/index.php/2021/09/11/color-image-histograms/
     def histogram_equalization(self, image):
@@ -43,12 +52,43 @@ class ImageProcessor:
 
     # Source: https://docs.opencv.org/4.x/d4/d13/tutorial_py_filtering.html
     def gaussian_blur(self, image):
-        return cv2.GaussianBlur(image, (self.gauss_kernel, self.gauss_kernel), self.gauss_sigma)
+        if self.gauss_kernel == 0 and self.gauss_sigma == 0:
+            return image
+        kernel = self.gauss_kernel
+        if kernel > 0 and kernel % 2 == 0:
+            kernel += 1
+        return cv2.GaussianBlur(image, (kernel, kernel), self.gauss_sigma)
 
     # Source: https://docs.opencv.org/3.4/da/d22/tutorial_py_canny.html
     def canny(self, image):
         edges = cv2.Canny(image, self.canny_threshold_1, self.canny_threshold_2)
         return cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
+
+    def hough(self, image):
+        # Convert image to greyscale
+        gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+        # Apply Hough Circle Transform
+        circles = cv2.HoughCircles(
+            gray_image, # Vstupné pole
+            cv2.HOUGH_GRADIENT, # Metóda
+            dp=self.hough_dp,  # Rozlíšenie akumulátora (1=rovnaké as input, 2=polovica rozlíšenia)
+            minDist=self.hough_mindist,  # min. vzdialenosť stredov kružníc
+            param1=self.hough_param1,  # vyššia hranica v Cannyho detektore
+            param2=self.hough_param2,  # hranica akumulátora pre stredy kručníc
+            minRadius=self.hough_minr,  # min. veľkosť kružníc
+            maxRadius=self.hough_maxr  # max. veľkosť kružníc
+        )
+
+        # Zobrazenie detekovaných kruhov
+        result = image.copy()
+        if circles is not None:
+            for c in circles[0, :]:
+                center = (int(c[0]), int(c[1]))
+                radius = int(c[2])
+                cv2.circle(result, center, 1, (0, 100, 100), 3)  # stred
+                cv2.circle(result, center, radius, (255, 0, 255), 3)  # kružnica
+        return result
 
     def apply(self):
         if self.original_image is None:
