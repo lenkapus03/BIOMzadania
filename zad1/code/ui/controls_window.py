@@ -99,11 +99,8 @@ class ControlsWindow:
             self._add_section_separator()
 
     def _build_bottom_buttons(self):
-        with dpg.group(horizontal=True):
-            dpg.add_button(label="Reset defaults", width=120, callback=self._global_callback,
-                           user_data="reset_defaults")
-            dpg.add_button(label="Save settings", width=120, callback=self._global_callback,
-                           user_data="save_settings")
+        dpg.add_button(label="Save settings", width=120, callback=self._global_callback,
+                       user_data="save_settings")
         dpg.add_checkbox(
             label="Preview original",
             tag="preview_toggle",

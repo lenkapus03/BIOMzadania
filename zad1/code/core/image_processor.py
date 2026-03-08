@@ -176,6 +176,9 @@ class ImageProcessor:
                 # Horizontálne musí byť stred blízko stredu obrazka
                 if abs(x - cx) > w * 0.4:
                     continue
+                # Horný okraj kruhu (y - r) musí byť v HORNEJ polovici obrazka
+                if (y - r) > cy:
+                    continue
                 # Preferujeme kruh najbližší k stredu obrazka
                 score = dist
 
@@ -189,6 +192,9 @@ class ImageProcessor:
                     continue
                 # Horizontálne musí byť stred blízko stredu obrazka
                 if abs(x - cx) > w * 0.4:
+                    continue
+                # Dolný okraj kruhu (y + r) musí byť v DOLNEJ polovici obrazka
+                if (y + r) < cy:
                     continue
                 # Preferujeme kruh najbližší k stredu obrazka
                 score = dist

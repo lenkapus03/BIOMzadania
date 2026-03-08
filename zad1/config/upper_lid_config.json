@@ -9,7 +9,7 @@
   "hough_mindist": 42,
   "hough_param1": 86,
   "hough_param2": 12,
-  "hough_minr": 52,
+  "hough_minr": 296,
   "hough_maxr": 500,
   "use_histogram_eq": true,
   "use_clahe": true,
