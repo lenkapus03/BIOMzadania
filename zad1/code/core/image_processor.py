@@ -16,6 +16,10 @@ class ImageProcessor:
         self.gauss_kernel = 5
         self.gauss_sigma = 1.0
 
+        self.use_canny = False
+        self.canny_threshold_1 = 50
+        self.canny_threshold_2 = 150
+
     # Source: https://www.freedomvc.com/index.php/2021/09/11/color-image-histograms/
     def histogram_equalization(self, image):
         b, g, r = cv2.split(image)
@@ -41,6 +45,11 @@ class ImageProcessor:
     def gaussian_blur(self, image):
         return cv2.GaussianBlur(image, (self.gauss_kernel, self.gauss_kernel), self.gauss_sigma)
 
+    # Source: https://docs.opencv.org/3.4/da/d22/tutorial_py_canny.html
+    def canny(self, image):
+        edges = cv2.Canny(image, self.canny_threshold_1, self.canny_threshold_2)
+        return cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
+
     def apply(self):
         if self.original_image is None:
             self.processed_image = None
@@ -51,8 +60,10 @@ class ImageProcessor:
             img = self.histogram_equalization(img)
         if self.use_clahe:
             img = self.clahe(img)
-        if self.use_blur:
+        if self.use_blur and not self.use_canny:
             img = self.gaussian_blur(img)
+        if self.use_canny:
+            img = self.canny(img)
 
         self.processed_image = img
         return self.processed_image

@@ -31,14 +31,14 @@ PARAMETER_CONFIG = {
     },
 
     # Canny
-    "canny_t1": {
-        "command": "toggle_canny",
+    "threshold_1": {
+        "command": "canny",
         "default": 50,
         "min": 0,
         "max": 500,
     },
-    "canny_t2": {
-        "command": "toggle_canny",
+    "threshold_2": {
+        "command": "canny",
         "default": 150,
         "min": 0,
         "max": 500,

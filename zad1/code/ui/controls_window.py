@@ -39,7 +39,7 @@ class ControlsWindow:
             "Histogram equation": "use_histogram_eq",
             "CLAHE": "use_clahe",
             "Gaussian blur": "use_blur",
-            "Show canny edges": "show_canny",
+            "Show canny edges": "use_canny",
             "Hough circles": "show_hough"
         }
 
@@ -56,7 +56,7 @@ class ControlsWindow:
         sections = [
             ("CLAHE", ["clahe_clip", "clahe_tile"]),
             ("Gaussian Blur", ["gauss_kernel", "gauss_sigma"]),
-            ("Canny", ["canny_t1", "canny_t2"]),
+            ("Canny", ["threshold_1", "threshold_2"]),
             (
                 "HoughCircles",
                 [

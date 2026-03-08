@@ -3,8 +3,7 @@ import dearpygui.dearpygui as dpg
 
 class GaussianBlurCommand(ImageCommand):
     def execute(self, sender=None, app_data=None, user_data=None):
-        kernel = int(dpg.get_value("gauss_kernel"))
-
-        self.processor.gauss_kernel = kernel
+        self.processor.gauss_kernel = int(dpg.get_value("gauss_kernel"))
         self.processor.gauss_sigma = float(dpg.get_value("gauss_sigma"))
+
         self.refresh()

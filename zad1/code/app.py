@@ -1,6 +1,7 @@
 import os
 import dearpygui.dearpygui as dpg
 
+from zad1.code.commands.canny_command import CannyCommand
 from zad1.code.commands.clahe_command import CLAHECommand
 from zad1.code.commands.dispatcher import CommandDispatcher
 from zad1.code.commands.gaussian_blur_command import GaussianBlurCommand
@@ -91,11 +92,17 @@ class Application:
 
     def _register_commands(self):
         self.dispatcher.register("update_canvas", UpdateCanvasCommand(self.processor, self.renderer))
-        self.dispatcher.register("use_clahe", ToggleCommand(self.processor, self.renderer, "use_clahe"))
+
         self.dispatcher.register("use_histogram_eq", ToggleCommand(self.processor, self.renderer, "use_histogram_eq"))
+
+        self.dispatcher.register("use_clahe", ToggleCommand(self.processor, self.renderer, "use_clahe"))
         self.dispatcher.register("clahe", CLAHECommand(self.processor, self.renderer))
+
         self.dispatcher.register("use_blur", ToggleCommand(self.processor, self.renderer, "use_blur"))
         self.dispatcher.register("gaussian_blur", GaussianBlurCommand(self.processor, self.renderer))
+
+        self.dispatcher.register("use_canny", ToggleCommand(self.processor, self.renderer, "use_canny"))
+        self.dispatcher.register("canny", CannyCommand(self.processor, self.renderer))
 
     # UI helpers
     def _setup_fonts(self):
