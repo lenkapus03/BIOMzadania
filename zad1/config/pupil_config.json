@@ -15,5 +15,7 @@
   "use_clahe": true,
   "use_blur": true,
   "use_canny": true,
-  "show_hough": true
+  "show_hough": true,
+  "canvas_width": 320,
+  "canvas_height": 280
 }

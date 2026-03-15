@@ -27,6 +27,12 @@ class SaveSettingsCommand(ImageCommand):
 
         os.makedirs(CONFIG_DIR, exist_ok=True)
         for circle, params in self.state.circle_params.items():
+            print(f"Saving {circle}: {params}")
             path = os.path.join(CONFIG_DIR, f"{circle}_config.json")
             with open(path, "w") as f:
                 json.dump(params, f, indent=2)
+
+        # Ulož cestu k aktuálnemu obrazku
+        log = {"image_path": self.state.current_image_path}
+        with open(os.path.join(CONFIG_DIR, "session.json"), "w") as f:
+            json.dump(log, f, indent=2)

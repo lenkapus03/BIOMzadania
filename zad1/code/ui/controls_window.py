@@ -26,7 +26,7 @@ class ControlsWindow:
             self._build_bottom_buttons()
 
     def _build_circle_selector(self):
-        title = dpg.add_text("Kružnica")
+        title = dpg.add_text("Kruznica")
         dpg.bind_item_font(title, self.large_font)
         dpg.add_combo(
             items=["iris", "pupil", "upper_lid", "lower_lid"],
@@ -56,6 +56,8 @@ class ControlsWindow:
             "Show canny edges": "use_canny",
             "Hough circles": "show_hough",
             "Show rejected circles": "show_rejected_circles",
+            "Show ground truth": "show_ground_truth",
+            "Show all circles": "show_all_circles",
         }
 
         with dpg.group(horizontal=True):
@@ -99,8 +101,13 @@ class ControlsWindow:
             self._add_section_separator()
 
     def _build_bottom_buttons(self):
-        dpg.add_button(label="Save settings", width=120, callback=self._global_callback,
-                       user_data="save_settings")
+        with dpg.group(horizontal=True):
+            dpg.add_button(label="Reset defaults", width=120, callback=self._global_callback,
+                           user_data="reset_defaults")
+            dpg.add_button(label="Save settings", width=120, callback=self._global_callback,
+                           user_data="save_settings")
+            dpg.add_button(label="Evaluate", width=120, callback=self._global_callback,
+                           user_data="evaluate")
         dpg.add_checkbox(
             label="Preview original",
             tag="preview_toggle",

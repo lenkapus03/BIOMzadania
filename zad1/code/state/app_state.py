@@ -8,6 +8,8 @@ class AppState:
         self.texture_id = None
         self.current_image_path = None
         self.active_circle = "iris"
+        self.current_record = None
+        self.ground_truth_circles = None
 
         self.circle_params = {
             "iris": {},

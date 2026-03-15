@@ -1,10 +1,10 @@
 {
-  "clahe_clip": 3.505000114440918,
-  "clahe_tile": 28,
+  "clahe_clip": 2.0,
+  "clahe_tile": 8,
   "gauss_kernel": 17,
   "gauss_sigma": 6.738999843597412,
-  "threshold_1": 165,
-  "threshold_2": 339,
+  "threshold_1": 50,
+  "threshold_2": 150,
   "hough_dp": 1.0,
   "hough_mindist": 42,
   "hough_param1": 86,
@@ -15,5 +15,7 @@
   "use_clahe": true,
   "use_blur": true,
   "use_canny": true,
-  "show_hough": true
+  "show_hough": true,
+  "canvas_width": 1277,
+  "canvas_height": 960
 }

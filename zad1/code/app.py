@@ -4,12 +4,14 @@ import dearpygui.dearpygui as dpg
 from zad1.code.commands.canny_command import CannyCommand
 from zad1.code.commands.clahe_command import CLAHECommand
 from zad1.code.commands.dispatcher import CommandDispatcher
+from zad1.code.commands.evaluate_command import EvaluateCommand
 from zad1.code.commands.gaussian_blur_command import GaussianBlurCommand
 from zad1.code.commands.hough_command import HoughCommand
 from zad1.code.commands.preview_command import PreviewOriginalCommand
 from zad1.code.commands.save_settings import SaveSettingsCommand
 from zad1.code.commands.select_circle_command import SelectCircleCommand
 from zad1.code.commands.toggle_command import ToggleCommand
+from zad1.code.commands.toggle_renderer_command import ToggleRendererCommand
 from zad1.code.commands.update_canvas_command import UpdateCanvasCommand
 from zad1.code.core.helpers import apply_params
 from zad1.code.core.image_manager import ImageManager
@@ -49,11 +51,21 @@ class Application:
             return
 
         first_record = load_data.RANDOM_RECORDS[0]
+        self.state.current_record = first_record
+        self.state.ground_truth_circles = self._record_to_gt(first_record)
         current_dir = os.path.dirname(os.path.abspath(__file__))
         data_folder = os.path.normpath(os.path.join(current_dir, "..", "data"))
         full_path = os.path.normpath(os.path.join(data_folder, first_record.image.replace("\\", "/")))
 
         self.image_manager.load_image(full_path)
+
+    def _record_to_gt(self, record):
+        return {
+            "pupil": (record.center_x_1, record.center_y_1, record.polomer_1),
+            "iris": (record.center_x_2, record.center_y_2, record.polomer_2),
+            "lower_lid": (record.center_x_3, record.center_y_3, record.polomer_3),
+            "upper_lid": (record.center_x_4, record.center_y_4, record.polomer_4),
+        }
 
     def _init_processor(self):
         self.processor = ImageProcessor(
@@ -75,20 +87,18 @@ class Application:
         if width == 0 or height == 0:
             return
 
-        canvas_data = self.renderer.get_scaled_texture()
-        if canvas_data is None:
-            # fallback to blank RGBA
+        result = self.renderer.get_scaled_texture()
+        if result is None:
             canvas_data = [0.0] * (width * height * 4)
+        else:
+            canvas_data, width, height = result  # rozbaľ tuple
 
-        # Only create the registry once
         if not hasattr(self, "_texture_registry"):
             self._texture_registry = dpg.add_texture_registry(show=False)
 
-        # Remove old texture if exists
         if hasattr(self.state, "texture_id") and dpg.does_item_exist(self.state.texture_id):
             dpg.delete_item(self.state.texture_id)
 
-        # Add the new texture id into state
         self.state.texture_id = dpg.add_dynamic_texture(
             width=width,
             height=height,
@@ -118,7 +128,11 @@ class Application:
         self.dispatcher.register("save_settings", SaveSettingsCommand(self.processor, self.renderer, self.state))
         self.dispatcher.register("preview_original", ToggleCommand(self.processor, self.renderer, "preview_original"))
 
-    # UI helpers
+        self.dispatcher.register("evaluate", EvaluateCommand(self.processor, self.renderer, self.state))
+
+        self.dispatcher.register("show_ground_truth",ToggleRendererCommand(self.processor, self.renderer, "show_ground_truth"))
+        self.dispatcher.register("show_all_circles",ToggleRendererCommand(self.processor, self.renderer, "show_all_circles"))    # UI helpers
+
     def _setup_fonts(self):
         with dpg.font_registry():
             large_font = dpg.add_font("C:/Windows/Fonts/arial.ttf", 12)

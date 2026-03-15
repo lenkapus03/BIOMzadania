@@ -74,23 +74,24 @@ class ImageProcessor:
         edges = cv2.Canny(image, self.canny_threshold_1, self.canny_threshold_2)
         return cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
 
-    def hough(self, image, active_circle="iris", original_shape=None, show_rejected=True, detect_on=None):
-        # Detect circles on detect_on if provided, otherwise on image
+    def hough(self, image, active_circle="iris", original_shape=None, show_rejected=True, detect_on=None,
+              filter_canvas_shape=None, draw_offset=(0, 0)):
+        # Detekuj kruhy na detect_on ak je zadaný, inak na image
         source = detect_on if detect_on is not None else image
 
-        # Convert image to greyscale
+        # Konverzia na odtiene šedej
         gray_image = cv2.cvtColor(source, cv2.COLOR_BGR2GRAY)
 
-        # Apply Hough Circle Transform
+        # Aplikácia Houghovej transformácie
         circles = cv2.HoughCircles(
-            gray_image, # Vstupné pole
-            cv2.HOUGH_GRADIENT, # Metóda
-            dp=self.hough_dp,  # Rozlíšenie akumulátora (1=rovnaké as input, 2=polovica rozlíšenia)
-            minDist=self.hough_mindist,  # min. vzdialenosť stredov kružníc
-            param1=self.hough_param1,  # vyššia hranica v Cannyho detektore
-            param2=self.hough_param2,  # hranica akumulátora pre stredy kručníc
-            minRadius=self.hough_minr,  # min. veľkosť kružníc
-            maxRadius=self.hough_maxr  # max. veľkosť kružníc
+            gray_image,
+            cv2.HOUGH_GRADIENT,
+            dp=self.hough_dp,  # Rozlíšenie akumulátora
+            minDist=self.hough_mindist,  # Min. vzdialenosť stredov kružníc
+            param1=self.hough_param1,  # Vyššia hranica v Cannyho detektore
+            param2=self.hough_param2,  # Hranica akumulátora pre stredy kružníc
+            minRadius=self.hough_minr,  # Min. veľkosť kružníc
+            maxRadius=self.hough_maxr  # Max. veľkosť kružníc
         )
 
         result = image.copy()
@@ -98,23 +99,28 @@ class ImageProcessor:
 
         if circles is not None:
             filter_shape = original_shape if original_shape is not None else image.shape
-            accepted = self.filter_circles(circles, filter_shape, active_circle, canvas_shape=image.shape)
+            # Použi filter_canvas_shape ak je zadaný, inak použi tvar source
+            fcs = filter_canvas_shape if filter_canvas_shape is not None else source.shape
+            accepted = self.filter_circles(circles, filter_shape, active_circle, canvas_shape=fcs)
             accepted_set = set()
             if accepted is not None:
                 for c in accepted[0, :]:
                     accepted_set.add((int(c[0]), int(c[1]), int(c[2])))
 
+            ox, oy = draw_offset
             for c in circles[0, :]:
-                center = (int(c[0]), int(c[1]))
-                radius = int(c[2])
-                is_accepted = (center[0], center[1], radius) in accepted_set
+                # Porovnávaj bez offsetu (súradnice v detect canvas priestore)
+                is_accepted = (int(c[0]), int(c[1]), int(c[2])) in accepted_set
 
                 if not is_accepted and not show_rejected:
                     continue
 
-                draw_color = color if is_accepted else (150, 150, 150)
-                cv2.circle(result, center, 1, draw_color, 1)
-                cv2.circle(result, center, radius, draw_color, 1)
+                # Kresli s offsetom (presunuté do display canvas priestoru)
+                center = (int(c[0]) + ox, int(c[1]) + oy)
+                radius = int(c[2])
+                draw_color = color if is_accepted else (150, 150, 150)  # sivá = odmietnutý
+                cv2.circle(result, center, 1, draw_color, 1)  # stred
+                cv2.circle(result, center, radius, draw_color, 1)  # kružnica
 
         return result
 
