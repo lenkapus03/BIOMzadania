@@ -57,3 +57,29 @@ def apply_params(saved, processor, renderer):
     processor.hough_maxr = int(saved.get("hough_maxr", PARAMETER_CONFIG["hough_maxr"]["default"]))
 
     processor.apply()
+
+def apply_params_headless(cfg, processor, renderer):
+    """Verzia apply_params bez DPG — pre použitie mimo aplikácie (grid search)."""
+    from zad1.code.ui.ui_parameters import PARAMETER_CONFIG, TOGGLE_TAGS
+
+    for tag in TOGGLE_TAGS:
+        if tag in cfg:
+            setattr(processor, tag, cfg[tag])
+
+    processor.clip_limit = cfg.get("clahe_clip", PARAMETER_CONFIG["clahe_clip"]["default"])
+    processor.grid_size = int(cfg.get("clahe_tile", PARAMETER_CONFIG["clahe_tile"]["default"]))
+    processor.gauss_kernel = int(cfg.get("gauss_kernel", PARAMETER_CONFIG["gauss_kernel"]["default"]))
+    processor.gauss_sigma = float(cfg.get("gauss_sigma", PARAMETER_CONFIG["gauss_sigma"]["default"]))
+    processor.canny_threshold_1 = int(cfg.get("threshold_1", PARAMETER_CONFIG["threshold_1"]["default"]))
+    processor.canny_threshold_2 = int(cfg.get("threshold_2", PARAMETER_CONFIG["threshold_2"]["default"]))
+    processor.hough_dp = float(cfg.get("hough_dp", PARAMETER_CONFIG["hough_dp"]["default"]))
+    processor.hough_mindist = int(cfg.get("hough_mindist", PARAMETER_CONFIG["hough_mindist"]["default"]))
+    processor.hough_param1 = int(cfg.get("hough_param1", PARAMETER_CONFIG["hough_param1"]["default"]))
+    processor.hough_param2 = int(cfg.get("hough_param2", PARAMETER_CONFIG["hough_param2"]["default"]))
+    processor.hough_minr = int(cfg.get("hough_minr", PARAMETER_CONFIG["hough_minr"]["default"]))
+    processor.hough_maxr = int(cfg.get("hough_maxr", PARAMETER_CONFIG["hough_maxr"]["default"]))
+
+    renderer.canvas_width = int(cfg.get("canvas_width", 320))
+    renderer.canvas_height = int(cfg.get("canvas_height", 280))
+
+    processor.apply()

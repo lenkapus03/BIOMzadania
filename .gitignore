@@ -1,6 +1,4 @@
 zad1/data
-zad1/config/eval_results.json
-zad1/config/session.json
 .idea/*
 
 # Python cache files

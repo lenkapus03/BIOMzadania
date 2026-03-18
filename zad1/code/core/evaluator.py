@@ -111,3 +111,29 @@ def print_metrics(metrics, image_name=None, iou_threshold=0.75):
         iou_str = f"{m['iou']:>8.3f}" if m["iou"] is not None else f"{'N/A':>8}"
         print(f"{name:<12} {m['precision']:>10.3f} {m['recall']:>8.3f} {m['f1']:>8.3f} {iou_str} {m['tp']:>4} {m['fp']:>4} {m['fn']:>4}")
     print(f"{'='*65}\n")
+
+def compute_batch_metrics(totals):
+    """Vypočíta precision, recall, F1 z agregovaných tp/fp/fn cez 100 záznamov."""
+    metrics = {}
+    for name, t in totals.items():
+        tp, fp, fn = t["tp"], t["fp"], t["fn"]
+        precision = tp / (tp + fp) if (tp + fp) > 0 else 0.0
+        recall    = tp / (tp + fn) if (tp + fn) > 0 else 0.0
+        f1        = 2 * precision * recall / (precision + recall) if (precision + recall) > 0 else 0.0
+        metrics[name] = {
+            "precision": precision, "recall": recall, "f1": f1,
+            "tp": tp, "fp": fp, "fn": fn
+        }
+    return metrics
+
+
+def print_batch_metrics(metrics, iou_threshold=0.75):
+    print(f"\n{'='*65}")
+    print(f"Batch evaluácia (100 záznamov), IoU threshold: {iou_threshold}")
+    print(f"{'='*65}")
+    print(f"{'Kružnica':<12} {'Precision':>10} {'Recall':>8} {'F1':>8} {'TP':>4} {'FP':>4} {'FN':>4}")
+    print(f"{'-'*65}")
+    for name, m in metrics.items():
+        print(f"{name:<12} {m['precision']:>10.3f} {m['recall']:>8.3f} {m['f1']:>8.3f} "
+              f"{m['tp']:>4} {m['fp']:>4} {m['fn']:>4}")
+    print(f"{'='*65}\n")

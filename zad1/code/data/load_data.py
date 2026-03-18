@@ -1,6 +1,9 @@
+import os
+
 import pandas as pd
 from dataclasses import dataclass
 
+ALL_RECORDS = []
 RANDOM_RECORDS = []
 
 @dataclass
@@ -34,3 +37,22 @@ def load_random_records(csv_path, n=100):
         records.append(ImageRecord(**row_dict))
 
     RANDOM_RECORDS = records
+    return records
+
+def load_valid_records(csv_path, data_folder, n=100):
+    """
+    Načíta záznamy kým nemá n platných (súbor existuje na disku).
+    Záznamy sa vyberajú náhodne z celého datasetu.
+    """
+    df = pd.read_csv(csv_path)
+    df = df.sample(frac=1)  # náhodné poradie
+    valid = []
+    for _, row in df.iterrows():
+        record = ImageRecord(**row.to_dict())
+        path = os.path.normpath(os.path.join(data_folder, record.image.replace("\\", "/")))
+        if os.path.exists(path):
+            valid.append(record)
+        if len(valid) >= n:
+            break
+    print(f"Načítaných {len(valid)} platných záznamov z {len(df)} celkovo")
+    return valid

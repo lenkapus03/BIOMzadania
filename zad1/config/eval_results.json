@@ -1,0 +1,156 @@
+{
+  "timestamp": "2026-03-18 14:17:08",
+  "iou_threshold": 0.75,
+  "single_image": {
+    "image": "209/L/S1209L08.jpg",
+    "per_circle": {
+      "iris": {
+        "detected": [
+          148,
+          133,
+          106
+        ],
+        "ground_truth": [
+          156,
+          152,
+          106
+        ],
+        "iou": 0.7799639003519212,
+        "tp": 1,
+        "fp": 0,
+        "fn": 0
+      },
+      "pupil": {
+        "detected": [
+          151,
+          135,
+          49
+        ],
+        "ground_truth": [
+          154,
+          156,
+          42
+        ],
+        "iou": 0.5278735160134117,
+        "tp": 0,
+        "fp": 1,
+        "fn": 1
+      },
+      "lower_lid": {
+        "detected": [
+          186,
+          -38,
+          305
+        ],
+        "ground_truth": [
+          146,
+          -13,
+          261
+        ],
+        "iou": 0.7296914279950244,
+        "tp": 0,
+        "fp": 1,
+        "fn": 1
+      },
+      "upper_lid": {
+        "detected": [
+          187,
+          335,
+          284
+        ],
+        "ground_truth": [
+          166,
+          304,
+          242
+        ],
+        "iou": 0.7260960126958937,
+        "tp": 0,
+        "fp": 1,
+        "fn": 1
+      }
+    },
+    "metrics": {
+      "iris": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "iou": 0.7799639003519212,
+        "tp": 1,
+        "fp": 0,
+        "fn": 0
+      },
+      "pupil": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "iou": 0.5278735160134117,
+        "tp": 0,
+        "fp": 1,
+        "fn": 1
+      },
+      "lower_lid": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "iou": 0.7296914279950244,
+        "tp": 0,
+        "fp": 1,
+        "fn": 1
+      },
+      "upper_lid": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "iou": 0.7260960126958937,
+        "tp": 0,
+        "fp": 1,
+        "fn": 1
+      },
+      "total": {
+        "precision": 0.25,
+        "recall": 0.25,
+        "f1": 0.25,
+        "iou": null,
+        "tp": 1,
+        "fp": 3,
+        "fn": 3
+      }
+    }
+  },
+  "batch_100": {
+    "metrics": {
+      "iris": {
+        "precision": 0.39,
+        "recall": 0.39,
+        "f1": 0.39,
+        "tp": 39,
+        "fp": 61,
+        "fn": 61
+      },
+      "pupil": {
+        "precision": 0.36,
+        "recall": 0.36,
+        "f1": 0.36,
+        "tp": 36,
+        "fp": 64,
+        "fn": 64
+      },
+      "lower_lid": {
+        "precision": 0.3854166666666667,
+        "recall": 0.37,
+        "f1": 0.3775510204081633,
+        "tp": 37,
+        "fp": 59,
+        "fn": 63
+      },
+      "upper_lid": {
+        "precision": 0.3563218390804598,
+        "recall": 0.31,
+        "f1": 0.3315508021390374,
+        "tp": 31,
+        "fp": 56,
+        "fn": 69
+      }
+    }
+  }
+}
