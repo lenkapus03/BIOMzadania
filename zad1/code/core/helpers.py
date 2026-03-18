@@ -2,20 +2,25 @@ import dearpygui.dearpygui as dpg
 from zad1.code.ui.ui_parameters import PARAMETER_CONFIG, TOGGLE_TAGS, CANVAS_TAGS
 
 def update_texture(state, image_data, width, height):
+    """
+    Aktualizuje DPG textúru novými dátami obrazka.
+    Odstráni starú textúru ak existuje a vytvorí novú s danými rozmermi.
+    Ak existuje widget 'displayed_image_widget', aktualizuje ho na novú textúru.
+    """
     if image_data is None:
         return None
 
-    # Delete previous texture if it exists
+    # Odstran predchadzajucu texturu ak existuje
     if getattr(state, 'texture_id', None) is not None and dpg.does_item_exist(state.texture_id):
         dpg.delete_item(state.texture_id)
 
-    # Create new texture
+    # Vytvor novu texturu
     with dpg.texture_registry():
         tex_id = dpg.add_dynamic_texture(width=width, height=height, default_value=image_data)
 
     state.texture_id = tex_id
 
-    # Update displayed image widget if it exists
+    # Update-ni widget obrazok
     if dpg.does_item_exist("displayed_image_widget"):
         dpg.configure_item(
             "displayed_image_widget",
@@ -27,6 +32,11 @@ def update_texture(state, image_data, width, height):
     return tex_id
 
 def apply_params(saved, processor, renderer):
+    """
+    Aplikuje uložené parametre do UI (DPG slidery), processora a renderera.
+    Používa sa v rámci aplikácie kde je dostupný DPG kontext.
+    Na konci zavolá processor.apply() aby sa obraz prerendroval s novými parametrami.
+    """
     for tag, cfg in PARAMETER_CONFIG.items():
         value = saved.get(tag, cfg["default"])
         dpg.set_value(tag, value)
@@ -60,8 +70,6 @@ def apply_params(saved, processor, renderer):
 
 def apply_params_headless(cfg, processor, renderer):
     """Verzia apply_params bez DPG — pre použitie mimo aplikácie (grid search)."""
-    from zad1.code.ui.ui_parameters import PARAMETER_CONFIG, TOGGLE_TAGS
-
     for tag in TOGGLE_TAGS:
         if tag in cfg:
             setattr(processor, tag, cfg[tag])

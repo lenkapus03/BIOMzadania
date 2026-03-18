@@ -1,6 +1,5 @@
 from zad1.code.commands.image_command import ImageCommand
 
-
 class ToggleRendererCommand(ImageCommand):
     def __init__(self, processor, renderer, attr_name):
         super().__init__(processor, renderer)

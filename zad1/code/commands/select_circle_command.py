@@ -28,4 +28,4 @@ class SelectCircleCommand(ImageCommand):
 
         saved = self.state.circle_params[app_data]
         apply_params(saved, self.processor, self.renderer)
-        self.refresh(apply_processor=False)
+        self.refresh(apply_processor=True)

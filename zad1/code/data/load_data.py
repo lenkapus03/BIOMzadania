@@ -24,6 +24,9 @@ class ImageRecord:
 
 
 def load_random_records(csv_path, n=100):
+    """
+    Načíta n náhodných záznamov
+    """
     global RANDOM_RECORDS
 
     df = pd.read_csv(csv_path)

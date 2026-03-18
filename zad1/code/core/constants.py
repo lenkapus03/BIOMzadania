@@ -1,5 +1,4 @@
 CIRCLE_NAMES = ["iris", "pupil", "lower_lid", "upper_lid"]
-# CIRCLE_NAMES = ["pupil"]
 CIRCLE_CSV_INDEX = {
     "pupil":     1,
     "iris":      2,

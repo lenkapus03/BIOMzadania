@@ -7,7 +7,6 @@ from zad1.code.commands.dispatcher import CommandDispatcher
 from zad1.code.commands.evaluate_command import EvaluateCommand
 from zad1.code.commands.gaussian_blur_command import GaussianBlurCommand
 from zad1.code.commands.hough_command import HoughCommand
-from zad1.code.commands.preview_command import PreviewOriginalCommand
 from zad1.code.commands.save_settings import SaveSettingsCommand
 from zad1.code.commands.select_circle_command import SelectCircleCommand
 from zad1.code.commands.toggle_command import ToggleCommand
@@ -25,7 +24,7 @@ from zad1.code.data import load_data
 
 class Application:
     def __init__(self):
-        # Core objects
+        # Hlavné objekty
         self.state = AppState()
         self.image_manager = ImageManager()
         self.processor = None
@@ -39,13 +38,12 @@ class Application:
         self.controls_window = None
         self.image_window = None
 
-        # Initialize app
+        # Inicializuj appku
         self._load_first_image()
         self._init_processor()
         self._init_renderer()
         self._register_commands()
 
-    # Initialization helpers
     def _load_first_image(self):
         if not load_data.RANDOM_RECORDS:
             return
@@ -171,7 +169,6 @@ class Application:
         self.image_window.build()
         self._apply_initial_params()
 
-    # Run app
     def run(self):
         dpg.create_context()
         dpg.create_viewport(title="Zad 1")

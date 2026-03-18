@@ -10,6 +10,7 @@ class ControlsWindow:
         self.height = height
 
     def build(self):
+        """Zostaví celé okno so všetkými sekciami."""
         with dpg.window(label="Controls", width=self.width, height=self.height, pos=(0, 0)):
             self._build_circle_selector()
             self._add_section_separator()
@@ -26,6 +27,7 @@ class ControlsWindow:
             self._build_bottom_buttons()
 
     def _build_circle_selector(self):
+        """Vytvorí combo box pre výber aktívnej kružnice."""
         title = dpg.add_text("Kruznica")
         dpg.bind_item_font(title, self.large_font)
         dpg.add_combo(
@@ -38,6 +40,7 @@ class ControlsWindow:
 
     # Sections
     def _build_view_section(self):
+        """Vytvorí sekciu so slidermi pre nastavenie rozlíšenia canvasu."""
         title = dpg.add_text("Zobrazenie")
         dpg.bind_item_font(title, self.large_font)
 
@@ -45,10 +48,11 @@ class ControlsWindow:
         self._add_slider("Canvas height", "canvas_height", "update_canvas", 280, 280, 1200)
 
     def _build_on_off_section(self):
+        """Vytvorí sekciu s checkboxmi pre zapínanie/vypínanie metód predspracovania a zobrazenia."""
         title = dpg.add_text("ON / OFF")
         dpg.bind_item_font(title, self.large_font)
 
-        # Map labels to processor attributes
+        # Namapuj labels na atribúty processora
         toggles = {
             "Histogram equation": "use_histogram_eq",
             "CLAHE": "use_clahe",
@@ -70,6 +74,7 @@ class ControlsWindow:
                     self._add_checkbox(label, attr, command_name=attr)
 
     def _build_parameter_sections(self):
+        """Vytvorí sekcie so slidermi pre parametre CLAHE, Gaussian blur, Canny a HoughCircles."""
         sections = [
             ("CLAHE", ["clahe_clip", "clahe_tile"]),
             ("Gaussian Blur", ["gauss_kernel", "gauss_sigma"]),
@@ -101,6 +106,7 @@ class ControlsWindow:
             self._add_section_separator()
 
     def _build_bottom_buttons(self):
+        """Vytvorí tlačidlá Reset defaults, Save settings, Evaluate a checkbox Preview original."""
         with dpg.group(horizontal=True):
             dpg.add_button(label="Reset defaults", width=120, callback=self._global_callback,
                            user_data="reset_defaults")
@@ -114,8 +120,12 @@ class ControlsWindow:
             callback=lambda s, a, u: self.dispatcher.execute("preview_original", s, a, u)
         )
 
-    # Helpers
+    # Pomocné funkcie
     def _add_slider(self, label, tag, command_name=None, default=0, min_v=0, max_v=2000, pre_callback=None):
+        """
+        Pridá slider do UI a nastaví naň callback.
+        pre_callback sa zavolá pred hlavným callbackom — používa sa napríklad na snap na nepárne číslo.
+        """
         def callback(sender, app_data, user_data):
             if pre_callback:
                 pre_callback(sender, app_data, user_data)
@@ -135,6 +145,7 @@ class ControlsWindow:
             dpg.set_item_user_data(tag, command_name)
 
     def _add_checkbox(self, label, processor_attr, command_name="use_histogram_eq"):
+        """Pridá checkbox ktorý pri zmene odošle command cez dispatcher."""
         add_checkbox(
             label=label,
             tag=processor_attr,
@@ -144,12 +155,15 @@ class ControlsWindow:
         )
 
     def _add_section_separator(self):
+        """Zaokrúhli hodnotu slidera na najbližšie nepárne číslo — používa sa pre gauss_kernel."""
         add_section_separator()
 
     def _snap_odd(self, sender, app_data, user_data):
+        """Zaokrúhli hodnotu slidera na najbližšie nepárne číslo — používa sa pre gauss_kernel."""
         if app_data != 0 and app_data % 2 == 0:
             dpg.set_value(sender, app_data + 1)
 
     def _global_callback(self, sender, app_data, user_data):
+        """Univerzálny callback — načíta command name z user_data položky a odošle ho cez dispatcher."""
         command_name = dpg.get_item_user_data(sender)  # ← always the command name
         self.dispatcher.execute(command_name, sender, app_data, user_data)

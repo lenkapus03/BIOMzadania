@@ -1,11 +1,10 @@
 import os
-
 import cv2
 
 from zad1.code.core.constants import CIRCLE_CSV_INDEX, CIRCLE_NAMES
-from zad1.code.core.evaluator import evaluate_single
 from zad1.code.core.helpers import apply_params_headless, apply_params
-
+from zad1.code.data.load_data import load_valid_records
+from zad1.code.core.evaluator import evaluate_single
 
 def detect_circle(processor, renderer, cfg, circle_name, headless=False):
     """
@@ -112,10 +111,6 @@ def evaluate_batch(processor, renderer, circle_params, iou_threshold=0.75):
     Vyhodnotí detekciu na 100 náhodných záznamoch.
     Vracia agregované tp/fp/fn pre každú kružnicu.
     """
-    import cv2
-    from zad1.code.data.load_data import load_valid_records
-    from zad1.code.core.evaluator import evaluate_single
-
     DATA_FOLDER = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "data"))
     CSV_PATH = os.path.join(DATA_FOLDER, "iris_annotation.csv")
 

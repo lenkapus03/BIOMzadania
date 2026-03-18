@@ -98,7 +98,6 @@ def compute_metrics(results):
 
     return metrics
 
-
 def print_metrics(metrics, image_name=None, iou_threshold=0.75):
     print(f"\n{'='*65}")
     if image_name:

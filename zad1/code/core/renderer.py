@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from zad1.code.core.helpers import apply_params
+from zad1.code.core.helpers import update_texture
 
 class Renderer:
     def __init__(self, processor, state=None, canvas_width=320, canvas_height=280):
@@ -14,6 +15,7 @@ class Renderer:
         self.show_all_circles = False
 
     def _build_canvas(self, img):
+        """Umiestni obraz vycentrovaný na biely canvas s aktuálnymi rozmermi canvas_width x canvas_height."""
         img_h, img_w = img.shape[:2]
         canvas = np.ones((self.canvas_height, self.canvas_width, 3), dtype=np.uint8) * 255
 
@@ -33,6 +35,12 @@ class Renderer:
         return canvas
 
     def get_scaled_texture(self):
+        """
+        Zostaví výslednú textúru pre zobrazenie v DPG.
+        Podľa aktívnych prepínačov aplikuje Houghovu detekciu alebo show_all_circles,
+        prípadne nakreslí ground truth kružnice.
+        Vracia tuple (rgba_data, width, height).
+        """
         if self.processor.processed_image is None:
             return None
 
@@ -139,6 +147,10 @@ class Renderer:
         return canvas.astype(np.float32).flatten() / 255.0, display_w, display_h
 
     def refresh_texture(self, apply_processor=True):
+        """
+        Prerendruje textúru — voliteľne najprv aplikuje predspracovanie obrazka.
+        Aktualizuje DPG textúru pomocou update_texture.
+        """
         if apply_processor:
             self.processor.apply()
 
@@ -149,11 +161,11 @@ class Renderer:
         # Rozbaľ textúru a rozmery — rozmery sa môžu líšiť pri show_all_circles
         tex_data, display_w, display_h = result
 
-        from zad1.code.core.helpers import update_texture
         self.texture_id = update_texture(self, tex_data, display_w, display_h)
         return self.texture_id
 
     def _draw_ground_truth(self, canvas, circles):
+        """Nakreslí ground truth kružnice na canvas fialovou farbou s prepočtom do canvas súradníc."""
         result = canvas.copy()
         img_h, img_w = self.processor.original_image.shape[:2]
         x_offset = (self.canvas_width - img_w) // 2

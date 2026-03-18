@@ -8,6 +8,7 @@ class ImageWindow:
         self.pos_x = pos_x
 
     def build(self):
+        """Zostaví okno a vytvorí image widget."""
         with dpg.window(
             label="View image",
             width=self.width,
@@ -17,6 +18,7 @@ class ImageWindow:
             self._create_image_widget()
 
     def _create_image_widget(self):
+        """Pridá DPG image widget s aktuálnou textúrou. Ak textúra neexistuje, nič nevykoná."""
         if self.state.texture_id is None:
             return
 

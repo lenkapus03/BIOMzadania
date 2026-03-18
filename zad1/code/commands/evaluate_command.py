@@ -6,11 +6,10 @@ from zad1.code.commands.image_command import ImageCommand
 from zad1.code.core.helpers import apply_params
 from zad1.code.core.detector import evaluate_record, evaluate_batch
 from zad1.code.core.evaluator import print_metrics, compute_metrics, compute_batch_metrics, print_batch_metrics
-
+from zad1.code.ui.ui_parameters import PARAMETER_CONFIG, TOGGLE_TAGS
 
 CONFIG_DIR = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "config"))
 IOU_THRESHOLD = 0.75
-
 
 class EvaluateCommand(ImageCommand):
     def __init__(self, processor, renderer, state):
@@ -46,19 +45,18 @@ class EvaluateCommand(ImageCommand):
         self._save_results(single_result, single_metrics, batch_metrics, record.image)
 
     def _backup_processor(self):
-        """Uloží aktuálne parametre processora a renderera pre neskoršie obnovenie."""
-        from zad1.code.ui.ui_parameters import PARAMETER_CONFIG, TOGGLE_TAGS
         backup = {}
+        # back-up processor parametre
         for tag, cfg in PARAMETER_CONFIG.items():
             backup[tag] = getattr(self.processor, tag, cfg["default"])
         for tag in TOGGLE_TAGS:
             backup[tag] = getattr(self.processor, tag, False)
+        # back-up renderer parametre
         backup["canvas_width"] = self.renderer.canvas_width
         backup["canvas_height"] = self.renderer.canvas_height
         return backup
 
     def _save_results(self, single_result, single_metrics, batch_metrics, image_name):
-        """Uloží výsledky do JSON súboru v config priečinku."""
         output = {
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
             "iou_threshold": IOU_THRESHOLD,

@@ -1,5 +1,4 @@
 from abc import ABC
-
 from zad1.code.commands.base_command import Command
 
 class ImageCommand(Command, ABC):

@@ -13,7 +13,7 @@ class ImageProcessor:
         self.original_image = original_image
         self.processed_image = original_image.copy() if original_image is not None else None
 
-        # Settings
+        # Nastavenia
         self.use_histogram_eq = False
 
         self.use_clahe = False
@@ -32,8 +32,8 @@ class ImageProcessor:
         self.show_rejected_circles = False
         self.hough_dp = 1.2
         self.hough_mindist = 50
-        self.hough_param1 = 100  # higher canny threshold (internal)
-        self.hough_param2 = 30  # accumulator threshold
+        self.hough_param1 = 100
+        self.hough_param2 = 30
         self.hough_minr = 0
         self.hough_maxr = 0
 
@@ -41,6 +41,7 @@ class ImageProcessor:
 
     # Source: https://www.freedomvc.com/index.php/2021/09/11/color-image-histograms/
     def histogram_equalization(self, image):
+        """Aplikuje histogramovú ekvalizáciu samostatne na každý BGR kanál."""
         b, g, r = cv2.split(image)
         return cv2.merge([
             cv2.equalizeHist(b),
@@ -50,6 +51,7 @@ class ImageProcessor:
 
     # Source: https://medium.com/@lin.yong.hui.jason/histogram-equalization-for-color-images-using-opencv-655ae13b9dd0
     def clahe(self, image):
+        """Aplikuje CLAHE (Contrast Limited Adaptive Histogram Equalization) na každý BGR kanál."""
         clahe_obj = cv2.createCLAHE(
             clipLimit=self.clip_limit,
             tileGridSize=(self.grid_size, self.grid_size)
@@ -62,6 +64,10 @@ class ImageProcessor:
 
     # Source: https://docs.opencv.org/4.x/d4/d13/tutorial_py_filtering.html
     def gaussian_blur(self, image):
+        """
+        Aplikuje Gaussovské rozmazanie. Ak sú kernel aj sigma nulové, vráti obraz bez zmeny.
+        Párny kernel sa automaticky zvýši o 1 aby bol nepárny.
+        """
         if self.gauss_kernel == 0 and self.gauss_sigma == 0:
             return image
         kernel = self.gauss_kernel
@@ -71,11 +77,18 @@ class ImageProcessor:
 
     # Source: https://docs.opencv.org/3.4/da/d22/tutorial_py_canny.html
     def canny(self, image):
+        """Aplikuje Cannyho detektor hrán a konvertuje výsledok späť do BGR formátu."""
         edges = cv2.Canny(image, self.canny_threshold_1, self.canny_threshold_2)
         return cv2.cvtColor(edges, cv2.COLOR_GRAY2BGR)
 
     def hough(self, image, active_circle="iris", original_shape=None, show_rejected=True, detect_on=None,
               filter_canvas_shape=None, draw_offset=(0, 0)):
+        """
+        Detekuje kružnice pomocou Houghovej transformácie a nakreslí ich na obraz.
+        Detekcia prebieha na detect_on ak je zadaný, inak priamo na image.
+        draw_offset posúva nakreslené kruhy do display canvas priestoru pri show_all_circles.
+        """
+
         # Detekuj kruhy na detect_on ak je zadaný, inak na image
         source = detect_on if detect_on is not None else image
 
@@ -125,6 +138,10 @@ class ImageProcessor:
         return result
 
     def filter_circles(self, circles, image_shape, active_circle, canvas_shape=None):
+        """
+        Filtruje detekované kružnice podľa geometrických pravidiel pre daný typ kružnice.
+        Vracia najlepší kandidát — kruh s najmenšou vzdialenosťou od stredu obrazka.
+        """
         if circles is None:
             return None
 
@@ -217,6 +234,11 @@ class ImageProcessor:
         return np.array([[best]], dtype=np.float32)
 
     def apply(self):
+        """
+        Aplikuje všetky zapnuté metódy predspracovania v poradí:
+        histogram eq → CLAHE → Gaussian blur → Canny.
+        Výsledok uloží do processed_image.
+        """
         if self.original_image is None:
             self.processed_image = None
             return None
