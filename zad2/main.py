@@ -1,25 +1,15 @@
 import sys
 from pathlib import Path
 
-import numpy as np
+import cv2
+
+from zad2.data_loader import load_video
+from zad2.detection.annotator import play_video
 
 DATA_DIR = Path("videos-K-O")
 
-
-def load_npz(path: Path) -> dict:
-    """Load a single .npz file and return its arrays."""
-    npz = np.load(path, allow_pickle=True)
-    data = {key: npz[key] for key in npz.files}
-    return data
-
-
-def inspect(path: Path, data: dict):
-    """Print a summary of what's inside an .npz file."""
-    print(f"\n{'=' * 60}")
-    print(f"File: {path.name}")
-    print(f"{'=' * 60}")
-    for key, arr in data.items():
-        print(f"  {key:20s}  shape={arr.shape}  dtype={arr.dtype}")
+SHOW_SAMPLES = False
+PLAY_ANNOTATED  = True
 
 
 def main():
@@ -32,11 +22,34 @@ def main():
         print(f"[ERROR] No .npz files found in '{DATA_DIR}'.")
         sys.exit(1)
 
-    print(f"Found {len(npz_files)} file(s) in '{DATA_DIR}'.\n")
+    print(f"Found {len(npz_files)} file(s) in '{DATA_DIR}'.")
 
-    for path in npz_files:
-        data = load_npz(path)
-        inspect(path, data)
+    if SHOW_SAMPLES:
+        for i in range(min(len(npz_files), 20)):
+            v = load_video(npz_files[i])
+            print(f"\n  {v.name}")
+            print(f"    frames      {v.frames.shape}   {v.frames.dtype}")
+            print(f"    boxes       {v.boxes.shape}     {v.boxes.dtype}")
+            print(f"    landmarks   {v.landmarks.shape}  {v.landmarks.dtype}")
+            print(f"    landmarks3d {v.landmarks3d.shape}  {v.landmarks3d.dtype}")
+
+    if PLAY_ANNOTATED:
+        video_index = 0
+        v = load_video(npz_files[video_index])
+
+        while True:
+            action = play_video(v, video_index, len(npz_files))
+
+            if action == "next":
+                video_index = min(video_index + 1, len(npz_files) - 1)
+                v = load_video(npz_files[video_index])
+            elif action == "prev":
+                video_index = max(video_index - 1, 0)
+                v = load_video(npz_files[video_index])
+            elif action == "quit":
+                break
+
+        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
