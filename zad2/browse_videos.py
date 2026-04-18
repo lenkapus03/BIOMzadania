@@ -15,7 +15,7 @@ from zad2.utils.data_loader import load_video
 from zad2.utils.annotator import play_video
 
 # ─── change this to switch dataset ────────────────────────────────────────────
-DATA_DIR = Path(__file__).parent / "videos-K-O"
+DATA_DIR = Path(__file__).parent / "data/videos-K-O"
 # ──────────────────────────────────────────────────────────────────────────────
 
 

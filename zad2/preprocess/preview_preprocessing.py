@@ -17,7 +17,7 @@ import cv2
 from zad2.utils.data_loader import load_video
 from zad2.preprocess.preprocessor import preprocess, BLUR_KERNEL, CLAHE_CLIP_LIMIT, CLAHE_TILE_SIZE
 
-DATA_DIR   = Path(__file__).parent.parent / "videos-K-O"
+DATA_DIR   = Path(__file__).parent.parent / "data/videos-K-O"
 
 N_PREVIEWS = 3
 

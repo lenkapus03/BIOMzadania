@@ -18,8 +18,8 @@ import numpy as np
 from zad2.utils.data_loader import load_video
 from zad2.preprocess.preprocessor import preprocess
 
-SRC_DIR = Path(__file__).parent.parent.parent / "videos-K-O"
-DST_DIR = Path(__file__).parent.parent.parent / "videos-K-O-preprocessed"
+SRC_DIR = Path(__file__).parent.parent.parent / "data/videos-K-O"
+DST_DIR = Path(__file__).parent.parent.parent / "data/videos-K-O-preprocessed"
 
 
 def main():
