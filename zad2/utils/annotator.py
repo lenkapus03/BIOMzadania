@@ -126,21 +126,35 @@ def _in_rect(x, y, rect, y_offset: int) -> bool:
 
 
 def draw_frame(frame: np.ndarray, box: np.ndarray, landmarks: np.ndarray,
-               top_text: str, bottom_text: str, scale: float):
+               top_text: str, bottom_text: str, scale: float,
+               show_gt_box: bool = True, show_landmarks: bool = True,
+               detected_box: np.ndarray | None = None):
     """
     Annotate frame, resize, attach text bars.
     Returns (composite_image, btn_rects, top_bar_height).
+
+    Args:
+        show_gt_box:   draw ground-truth bounding box (from dataset)
+        show_landmarks: draw 68 facial landmarks
+        detected_box:  (4,) int32 array [x1,y1,x2,y2] from detector, or None
     """
     img = frame.copy()
 
-    # bounding box
-    x1, y1 = box[:, 0].min(), box[:, 1].min()
-    x2, y2 = box[:, 0].max(), box[:, 1].max()
-    cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), BOX_COLOR, BOX_THICKNESS)
+    # ground-truth bounding box
+    if show_gt_box:
+        x1, y1 = box[:, 0].min(), box[:, 1].min()
+        x2, y2 = box[:, 0].max(), box[:, 1].max()
+        cv2.rectangle(img, (int(x1), int(y1)), (int(x2), int(y2)), BOX_COLOR, BOX_THICKNESS)
+
+    # detected bounding box
+    if detected_box is not None and detected_box[0] != -1:
+        cv2.rectangle(img, (detected_box[0], detected_box[1]),
+                      (detected_box[2], detected_box[3]), (255, 0, 0), BOX_THICKNESS)
 
     # landmarks
-    for (x, y) in landmarks:
-        cv2.circle(img, (int(x), int(y)), LM_RADIUS, LM_COLOR, -1)
+    if show_landmarks:
+        for (x, y) in landmarks:
+            cv2.circle(img, (int(x), int(y)), LM_RADIUS, LM_COLOR, -1)
 
     # resize
     if scale != 1.0:
@@ -156,31 +170,43 @@ def draw_frame(frame: np.ndarray, box: np.ndarray, landmarks: np.ndarray,
     return composite, btn_rects, top_bar.shape[0]
 
 
-def play_video(video_data, video_index: int, total: int) -> str:
+def play_video(video_data, video_index: int, total: int,
+              show_gt_box: bool = True, show_landmarks: bool = True,
+              show_detected_box: bool = True) -> str:
     """
     Play one video clip with annotations.
     Returns "next", "prev", or "quit".
+
+    Args:
+        show_gt_box:        draw ground-truth bounding box (green)
+        show_landmarks:     draw 68 facial landmarks
+        show_detected_box:  draw detected bounding box if present (blue)
     """
-    frames    = video_data.frames
-    boxes     = video_data.boxes
-    landmarks = video_data.landmarks
-    n         = len(frames)
-    delay     = int(1000 / FPS)
-    paused    = False
-    scale     = SCALE_DEFAULT
+    frames        = video_data.frames
+    boxes         = video_data.boxes
+    landmarks     = video_data.landmarks
+    detected_boxes = getattr(video_data, "detected_boxes", None)
+    N             = len(frames)
+    delay         = int(1000 / FPS)
+    paused        = False
+    scale         = SCALE_DEFAULT
 
     cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL)
     cv2.setMouseCallback(WINDOW_NAME, _mouse_cb)
 
-    print(f"  [{video_index + 1}/{total}] '{video_data.name}'  ({n} frames)")
+    print(f"  [{video_index + 1}/{total}] '{video_data.name}'  ({N} frames)")
 
     i = 0
     while True:
-        top_text    = f"[{video_index+1}/{total}] {video_data.name}\nframe {i+1}/{n}\nscale {scale:.2f}x"
+        top_text    = f"[{video_index+1}/{total}] {video_data.name}\nframe {i+1}/{N}\nscale {scale:.2f}x"
         bottom_text = "SPACE=pause\n+/-=scale\nQ=quit"
 
+        det_box = detected_boxes[i] if (show_detected_box and detected_boxes is not None) else None
+
         composite, btn_rects, top_h = draw_frame(
-            frames[i], boxes[i], landmarks[i], top_text, bottom_text, scale
+            frames[i], boxes[i], landmarks[i], top_text, bottom_text, scale,
+            show_gt_box=show_gt_box, show_landmarks=show_landmarks,
+            detected_box=det_box,
         )
 
         # bottom bar starts after top_bar + image
@@ -210,8 +236,7 @@ def play_video(video_data, video_index: int, total: int) -> str:
         elif key == ord("-"):
             scale = max(scale - SCALE_STEP, SCALE_MIN)
         elif not paused:
-            i = (i + 1) % n
-
+            i = (i + 1) % N
 
 def draw_detections(frame: np.ndarray, boxes: list[tuple[int, int, int, int]]) -> np.ndarray:
     """
