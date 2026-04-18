@@ -1,5 +1,5 @@
 """
-face_detection/annotator.py - Play a video with ground-truth annotations overlaid.
+detection/annotator.py - Play a video with ground-truth annotations overlaid.
 
 Draws:
   - Bounding box  (4 corner points from boundingBox)
@@ -131,7 +131,7 @@ def draw_frame(frame: np.ndarray, box: np.ndarray, landmarks: np.ndarray,
     Annotate frame, resize, attach text bars.
     Returns (composite_image, btn_rects, top_bar_height).
     """
-    img = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+    img = frame.copy()
 
     # bounding box
     x1, y1 = box[:, 0].min(), box[:, 1].min()

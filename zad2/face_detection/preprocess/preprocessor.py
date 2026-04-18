@@ -4,20 +4,6 @@ face_detection/preprocessor.py - Image preprocessing pipeline before face detect
 Pipeline (in order):
     1. Gaussian blur  — reduces high-frequency noise
     2. CLAHE          — adaptive contrast enhancement (local histogram equalization)
-
-Each step can be toggled individually via constants at the top.
-The functions operate on single BGR frames (numpy uint8 arrays).
-
-Why these steps?
-    - Gaussian blur:  video frames often contain compression artifacts and sensor
-                      noise; smoothing prevents these from being mistaken for
-                      facial edges by the detectors
-    - CLAHE:          faces appear under varying lighting conditions in video
-                      (shadows, backlight, overexposure); CLAHE computes separate
-                      histograms for small tiles of the image and redistributes
-                      lightness values locally, making facial features more
-                      consistently visible across the frame regardless of
-                      global illumination
 """
 
 import cv2
@@ -57,16 +43,6 @@ def clahe(frame: np.ndarray) -> np.ndarray:
 def preprocess(frame: np.ndarray) -> np.ndarray:
     """
     Run the full preprocessing pipeline on a single BGR frame.
-
-    Steps applied (if enabled):
-        1. Gaussian blur  — noise reduction
-        2. CLAHE          — local contrast enhancement (L channel in LAB)
-
-    Args:
-        frame: (H, W, 3) uint8 BGR image
-
-    Returns:
-        Preprocessed (H, W, 3) uint8 BGR image
     """
     result = frame.copy()
 

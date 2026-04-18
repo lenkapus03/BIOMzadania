@@ -15,7 +15,7 @@ from pathlib import Path
 import cv2
 
 from zad2.data_loader import load_video
-from zad2.face_detection.preprocessor import preprocess, BLUR_KERNEL, CLAHE_CLIP_LIMIT, CLAHE_TILE_SIZE
+from zad2.face_detection.preprocess.preprocessor import preprocess, BLUR_KERNEL, CLAHE_CLIP_LIMIT, CLAHE_TILE_SIZE
 
 DATA_DIR   = Path(__file__).parent.parent / "videos-K-O"
 
@@ -36,8 +36,8 @@ def main():
     windows = []
     for npz_path in sample:
         video   = load_video(npz_path)
-        frame   = video.frames[random.randint(0, len(video.frames) - 1)]  # BGR
-        pre     = preprocess(frame)                                         # BGR
+        frame   = video.frames[random.randint(0, len(video.frames) - 1)]
+        pre     = preprocess(frame)
 
         label = f"blur={BLUR_KERNEL} clip={CLAHE_CLIP_LIMIT} tile={CLAHE_TILE_SIZE}"
         cv2.putText(pre, label, (8, 20),
