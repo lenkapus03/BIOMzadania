@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from pathlib import Path
 
+import cv2
 import numpy as np
 
 
@@ -16,18 +17,19 @@ class VideoData:
         landmarks3D  (68, 3, N)     -> landmarks3d(N, 68, 3)
     """
     name:        str
-    frames:      np.ndarray   # (N, H, W, 3)  uint8
+    frames:      np.ndarray   # (N, H, W, 3)  uint8  BGR
     boxes:       np.ndarray   # (N, 4, 2)     float64  — 4 corners, each (x, y)
     landmarks:   np.ndarray   # (N, 68, 2)    float64  — 68 landmarks, each (x, y)
     landmarks3d: np.ndarray   # (N, 68, 3)    float64  — 68 landmarks, each (x, y, z)
 
 
 def load_video(path: Path) -> VideoData:
-    """Load one .npz file and return a VideoData"""
-    npz  = np.load(path)
+    """Load one .npz file and return a VideoData with BGR frames."""
+    npz = np.load(path)
 
-    # colorImages: (H, W, 3, N) -> (N, H, W, 3)
-    frames = np.transpose(npz["colorImages"], (3, 0, 1, 2))
+    # colorImages: (H, W, 3, N) -> (N, H, W, 3), then RGB -> BGR
+    frames_rgb = np.transpose(npz["colorImages"], (3, 0, 1, 2))
+    frames = np.stack([cv2.cvtColor(f, cv2.COLOR_RGB2BGR) for f in frames_rgb])
 
     # boundingBox: (4, 2, N) -> (N, 4, 2)
     boxes = np.transpose(npz["boundingBox"], (2, 0, 1))

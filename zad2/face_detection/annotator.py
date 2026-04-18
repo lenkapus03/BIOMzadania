@@ -1,5 +1,5 @@
 """
-detection/annotator.py - Play a video with ground-truth annotations overlaid.
+face_detection/annotator.py - Play a video with ground-truth annotations overlaid.
 
 Draws:
   - Bounding box  (4 corner points from boundingBox)
