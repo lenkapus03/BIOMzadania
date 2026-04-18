@@ -27,7 +27,7 @@ from mtcnn import MTCNN
 
 
 # ----- hyperparameter -----
-MIN_CONFIDENCE = 0.90   # confidence threshold; tune visually if needed
+MIN_CONFIDENCE = 0.90
 
 
 def detect(frame_bgr: np.ndarray, detector: MTCNN, min_confidence: float = MIN_CONFIDENCE) -> list[tuple[int, int, int, int]]:

@@ -2,8 +2,7 @@ zad1/data
 zad1/yolo_dataset
 zad1/yolo_multiclass_dataset
 
-zad2/data/videos-K-O
-zad2/data/videos-K-O-preprocessed
+zad2/data/*
 runs
 .idea/*
 

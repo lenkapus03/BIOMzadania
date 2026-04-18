@@ -211,3 +211,20 @@ def play_video(video_data, video_index: int, total: int) -> str:
             scale = max(scale - SCALE_STEP, SCALE_MIN)
         elif not paused:
             i = (i + 1) % n
+
+
+def draw_detections(frame: np.ndarray, boxes: list[tuple[int, int, int, int]]) -> np.ndarray:
+    """
+    Draw detected bounding boxes on a frame.
+
+    Args:
+        frame:  (H, W, 3) uint8 BGR image
+        boxes:  list of (x1, y1, x2, y2) detections from a detector
+
+    Returns:
+        Annotated (H, W, 3) uint8 BGR image
+    """
+    img = frame.copy()
+    for (x1, y1, x2, y2) in boxes:
+        cv2.rectangle(img, (x1, y1), (x2, y2), BOX_COLOR, BOX_THICKNESS)
+    return img
