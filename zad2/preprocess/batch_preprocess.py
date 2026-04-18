@@ -15,8 +15,8 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from zad2.data_loader import load_video
-from zad2.face_detection.preprocess.preprocessor import preprocess
+from zad2.utils.data_loader import load_video
+from zad2.preprocess.preprocessor import preprocess
 
 SRC_DIR = Path(__file__).parent.parent.parent / "videos-K-O"
 DST_DIR = Path(__file__).parent.parent.parent / "videos-K-O-preprocessed"

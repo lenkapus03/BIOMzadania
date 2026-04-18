@@ -11,8 +11,8 @@ from pathlib import Path
 
 import cv2
 
-from data_loader import load_video
-from face_detection.annotator import play_video
+from zad2.utils.data_loader import load_video
+from zad2.utils.annotator import play_video
 
 # ─── change this to switch dataset ────────────────────────────────────────────
 DATA_DIR = Path(__file__).parent / "videos-K-O"

@@ -164,7 +164,7 @@ def play_video(video_data, video_index: int, total: int) -> str:
     frames    = video_data.frames
     boxes     = video_data.boxes
     landmarks = video_data.landmarks
-    N         = len(frames)
+    n         = len(frames)
     delay     = int(1000 / FPS)
     paused    = False
     scale     = SCALE_DEFAULT
@@ -172,11 +172,11 @@ def play_video(video_data, video_index: int, total: int) -> str:
     cv2.namedWindow(WINDOW_NAME, cv2.WINDOW_NORMAL)
     cv2.setMouseCallback(WINDOW_NAME, _mouse_cb)
 
-    print(f"  [{video_index + 1}/{total}] '{video_data.name}'  ({N} frames)")
+    print(f"  [{video_index + 1}/{total}] '{video_data.name}'  ({n} frames)")
 
     i = 0
     while True:
-        top_text    = f"[{video_index+1}/{total}] {video_data.name}\nframe {i+1}/{N}\nscale {scale:.2f}x"
+        top_text    = f"[{video_index+1}/{total}] {video_data.name}\nframe {i+1}/{n}\nscale {scale:.2f}x"
         bottom_text = "SPACE=pause\n+/-=scale\nQ=quit"
 
         composite, btn_rects, top_h = draw_frame(
@@ -210,4 +210,4 @@ def play_video(video_data, video_index: int, total: int) -> str:
         elif key == ord("-"):
             scale = max(scale - SCALE_STEP, SCALE_MIN)
         elif not paused:
-            i = (i + 1) % N
+            i = (i + 1) % n
