@@ -27,14 +27,17 @@ from zad2.face_detection.hog_detector import detect as hog_detect
 from zad2.face_detection.mtcnn_detector import detect as mtcnn_detect
 
 # ─── switch between models ────────────────────────────────────────────────────
-MODEL = "mtcnn"   # "hog" or "mtcnn"
+MODEL = "hog"   # "hog" or "mtcnn"
 # ──────────────────────────────────────────────────────────────────────────────
 
 DATA_DIR = Path(__file__).parent.parent / "data/videos-K-O"
 OUT_DIR  = Path(__file__).parent.parent / "data/videos-K-O-detection-tuning"
 
 HOG_UPSAMPLE_VALUES     = [0, 1, 2, 3]
-MTCNN_CONFIDENCE_VALUES = [0.1, 0.5, 0.7, 0.8, 0.9, 0.95, 0.97, 0.99]
+MTCNN_CONFIDENCE_VALUES = [0.1, 0.5, 0.7, 0.8, 0.9, 0.95]
+
+# VIDEO_NAME = "Nicolas_Cage_1" # no detections
+VIDEO_NAME = "Kyle_Shewfelt_0"
 
 
 def boxes_to_array(boxes: list[tuple[int, int, int, int]], N: int) -> np.ndarray:
@@ -94,8 +97,15 @@ def run(model: str):
         print(f"[ERROR] No .npz files found in '{DATA_DIR}'.")
         return
 
-    npz_path = random.choice(npz_files)
-    video    = load_video(npz_path)
+    if VIDEO_NAME is not None:
+        matches = [p for p in npz_files if p.stem == VIDEO_NAME]
+        if not matches:
+            print(f"[ERROR] Video '{VIDEO_NAME}' not found in '{DATA_DIR}'.")
+            return
+        npz_path = matches[0]
+    else:
+        npz_path = random.choice(npz_files)
+    video = load_video(npz_path)
     print(f"Video: {video.name}  ({len(video.frames)} frames)\n")
 
     if model == "hog":
