@@ -3,6 +3,7 @@ zad1/yolo_dataset
 zad1/yolo_multiclass_dataset
 
 zad2/data/*
+zad2/face_detection/problematic/*
 runs
 .idea/*
 
