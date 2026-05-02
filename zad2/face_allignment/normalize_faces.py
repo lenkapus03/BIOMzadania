@@ -13,9 +13,9 @@ Normalization approach:
     - The face is rotated so the line between the eyes is horizontal,
       then scaled and cropped so the eyes land at fixed target positions.
 
-Output image size: 160x160 px
-    Source: https://www.cv-foundation.org/openaccess/content_cvpr_2015/papers/Schroff_FaceNet_A_Unified_2015_CVPR_paper.pdf
-    - Chosen to match FaceNet input size (Schroff et al. 2015), which will
+Output image size: 112x120 px
+    Source: https://openaccess.thecvf.com/content_CVPR_2019/papers/Deng_ArcFace_Additive_Angular_Margin_Loss_for_Deep_Face_Recognition_CVPR_2019_paper.pdf
+    - Chosen to match ArcFace input size, which will
       be used in the verification part of this project.
 
 Target eye positions (as fraction of image size):
@@ -34,8 +34,8 @@ import numpy as np
 SRC_DIR = Path(__file__).parent.parent / "data/videos-K-O-landmarks"
 OUT_DIR = Path(__file__).parent.parent / "data/videos-K-O-normalized"
 
-# Output image size — matches FaceNet input (Schroff et al. 2015)
-OUTPUT_SIZE = 160
+# Output image size — matches ArcFace input
+OUTPUT_SIZE = 112
 
 LEFT_EYE_TARGET  = (0.35, 0.35)
 RIGHT_EYE_TARGET = (0.65, 0.35)
