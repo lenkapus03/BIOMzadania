@@ -16,14 +16,19 @@ _model = None
 
 
 def _get_model():
-    """Load ArcFace recognition model (downloaded automatically on first run).
-    Loaded directly via model_zoo — skips face detection since faces are
-    already normalized to 112x112."""
+    """Load ArcFace recognition model via FaceAnalysis.
+
+    buffalo_l contains multiple models — we load the full pack and extract
+    only the recognition model (w600k_r50.onnx = ArcFaceONNX).
+    Faces are already normalized to 112x112 so detection is not needed.
+    ctx_id=-1 = CPU inference.
+    """
     global _model
     if _model is None:
-        import insightface
-        _model = insightface.model_zoo.get_model("buffalo_l", providers=["CPUExecutionProvider"])
-        _model.prepare(ctx_id=-1)  # ctx_id=-1 = CPU
+        from insightface.app import FaceAnalysis
+        app = FaceAnalysis(name="buffalo_l", providers=["CPUExecutionProvider"])
+        app.prepare(ctx_id=-1)
+        _model = app.models["recognition"]
     return _model
 
 
