@@ -14,8 +14,8 @@ from pathlib import Path
 import cv2
 
 from zad2.utils.data_loader import load_video
-from zad2.face_allignment.normalize_faces import align_face
-from zad2.face_allignment.predict_fan_landmarks import predict_landmarks
+from zad2.face_alignment.normalize_faces import align_face
+from zad2.face_alignment.predict_fan_landmarks import predict_landmarks
 import face_alignment as fa_module
 from mtcnn import MTCNN
 from zad2.face_detection.mtcnn_detector import detect as mtcnn_detect
@@ -62,6 +62,11 @@ def main():
                 continue
 
             print(f"Video: {npz_path.stem}  frame={idx}")
+
+            out_dir = Path(__file__).parent
+            cv2.imwrite(str(out_dir / "preview_original.png"), frame)
+            cv2.imwrite(str(out_dir / "preview_normalized.png"), aligned)
+            print(f"  saved -> preview_original.png, preview_normalized.png")
 
             cv2.namedWindow("original", cv2.WINDOW_AUTOSIZE)
             cv2.namedWindow("normalized", cv2.WINDOW_AUTOSIZE)

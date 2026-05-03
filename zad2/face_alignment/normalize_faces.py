@@ -87,7 +87,7 @@ def align_face(frame_bgr: np.ndarray, landmarks: np.ndarray) -> np.ndarray | Non
     # compute angle between eye centroids
     dY = right_eye[1] - left_eye[1]
     dX = right_eye[0] - left_eye[0]
-    angle = np.degrees(np.arctan2(dY, dX)) - 180
+    angle = np.degrees(np.arctan2(dY, dX))
 
     # compute desired right eye x-coordinate based on desired left eye
     desiredRightEyeX = 1.0 - LEFT_EYE_TARGET[0]
