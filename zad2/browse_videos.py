@@ -16,13 +16,18 @@ from zad2.utils.data_loader import load_video
 from zad2.utils.annotator import play_video
 
 # ─── change this to switch dataset ────────────────────────────────────────────
-DATA_DIR = Path(__file__).parent / "data/videos-K-O-detection-tuning"
+DATA_DIR = Path(__file__).parent / "data/videos-K-O"
+# ──────────────────────────────────────────────────────────────────────────────
+
+# ─── optionally pin a specific video (stem name, e.g. "Maria_Callas_1") ──────
+# None = browse all videos in DATA_DIR
+VIDEO_NAME = "Lauren_Hutton_5"
 # ──────────────────────────────────────────────────────────────────────────────
 
 # ─── toggle what is drawn ─────────────────────────────────────────────────────
-SHOW_GT_BOX       = True   # green ground-truth bounding box
+SHOW_GT_BOX       = True    # green ground-truth bounding box
 SHOW_LANDMARKS    = False   # 68 facial landmarks
-SHOW_DETECTED_BOX = True   # blue detected bounding box (if present in file)
+SHOW_DETECTED_BOX = True    # blue detected bounding box (if present in file)
 # ──────────────────────────────────────────────────────────────────────────────
 
 
@@ -31,10 +36,19 @@ def main():
         print(f"[ERROR] Data directory '{DATA_DIR}' not found.")
         sys.exit(1)
 
-    npz_files = sorted(DATA_DIR.glob("*.npz"))
-    if not npz_files:
+    all_files = sorted(DATA_DIR.glob("*.npz"))
+    if not all_files:
         print(f"[ERROR] No .npz files found in '{DATA_DIR}'.")
         sys.exit(1)
+
+    if VIDEO_NAME is not None:
+        matches = [p for p in all_files if p.stem == VIDEO_NAME]
+        if not matches:
+            print(f"[ERROR] Video '{VIDEO_NAME}' not found in '{DATA_DIR}'.")
+            sys.exit(1)
+        npz_files = matches
+    else:
+        npz_files = all_files
 
     print(f"Found {len(npz_files)} file(s) in '{DATA_DIR}'.")
 
